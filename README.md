@@ -1,6 +1,4 @@
 
 
-## 2026-o-repoBase
-
-Repositorio base plantilla para objetos
+## pdep-tp-objetos-paradigmaticos
 

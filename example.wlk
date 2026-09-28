@@ -312,7 +312,7 @@ object caminoDeGondor {
     var property lugares = [lebennin, minasTirith]
 
     method puedeRecorrerCamino(unGuerrero) {
-        return lugares.forEach({lugar => lugar.puedePasar(unGuerrero)})
+        return lugares.all({lugar => lugar.puedePasar(unGuerrero)})
     }
 
     method realizarCamino(unGuerrero) {
@@ -325,8 +325,18 @@ object tomBombadil
 {
     const vidaGuerrero = 2000
 
+    method vidaGuerrero() {
+        return vidaGuerrero
+    }
+
     method tamanioArsenal() {
         return 100
     }
-  
+
+    method poder() {
+        return 2000
+    }
+
+    method sacarVida(unValor) {
+    } // No pierde vida, es inmortal.
 }

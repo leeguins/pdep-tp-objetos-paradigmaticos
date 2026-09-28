@@ -71,7 +71,17 @@ object flechaBroncePrueba
     }
 }
 
+object armaDePoderCien {
+    method poder(unGuerrero) {
+        return 100
+    }
+}
 
+object armaDePoderCientoCincuenta {
+    method poder(unGuerrero) {
+        return 150
+    }
+}
 object flechaHierroPrueba
 {
     const poderActual = 70
@@ -85,6 +95,30 @@ object flechaHierroPrueba
         }
         
         return poderActual
+    }
+}
+
+object guerreroPoderoso {
+    method poder() {
+        return 3000
+    }
+}
+
+object guerreroDebil {
+    method poder() {
+        return 100
+    }
+}
+
+object guerreroArmado {
+    method tamanioArsenal() {
+        return 1
+    }
+}
+
+object guerreroDesarmado {
+    method tamanioArsenal() {
+        return 0
     }
 }
 
@@ -125,6 +159,27 @@ describe "Flecha de bronce" {
     }
 }
 
+describe "Gandalf" {
+    test "El poder de Gandalf, con vida 100 y armas de poder 100 y 150, debe ser 2000" {
+        gandalf.vidaGuerrero(100)
+        gandalf.armasGuerrero().clear()
+        gandalf.armasGuerrero().add(armaDePoderCien)
+        gandalf.armasGuerrero().add(armaDePoderCientoCincuenta)
+        assert.equals(2000, gandalf.poder())
+    }
+
+    test "El poder de Gandalf, con poca vida y armas de poder 100 y 150, debe ser 1500" {
+        gandalf.vidaGuerrero(5)
+        gandalf.armasGuerrero().clear()
+        gandalf.armasGuerrero().add(armaDePoderCien)
+        gandalf.armasGuerrero().add(armaDePoderCientoCincuenta)
+        assert.equals(1500, gandalf.poder())
+    }
+     // Acá podriamos agregar dos metodos de soltarArma agregaArma dentro de gandalf y que no quede el add y clear 
+}
+
+
+
 describe "Flecha de aluminio" {
     test "El poder de una flecha de aluminio, debe ser 50" {
         assert.equals(flechaAluminio.poderFlecha(), 50)
@@ -137,5 +192,103 @@ describe "Flecha de hierro" {
     }
     test "El poder de una flecha de hierro oxidada, debe ser 35" {
         assert.equals(flechaHierro.poderFlecha(), 35)
+    }
+}
+
+describe "Caja de flechas negras" {
+    test "El poder de la caja de flechas negras, con aluminio, hierro sin oxidar y bronce, debe ser 83" {
+        flechaHierro.sacarOxido()
+        assert.equals(83, cajaFlechasNegras.poder(personaPrueba))
+    }
+}
+
+describe "Lebennin" {
+    test "Un guerrero con poder 3000 puede pasar por Lebennin" {
+        assert.that(lebennin.puedePasar(guerreroPoderoso))
+    }
+
+    test "Un guerrero con poder 100 no puede pasar por Lebennin" {
+        assert.notThat(lebennin.puedePasar(guerreroDebil))
+    }
+
+    test "Gandalf pasa por Lebennin" {
+        gandalf.vidaGuerrero(100)
+        lebennin.pasarPorAca(gandalf)
+        assert.equals(100, gandalf.vidaGuerrero())
+    } 
+    
+}
+
+describe "Minas Tirith" {
+    test "Un personaje armado puede pasar Minas Tirith" {
+        assert.that(minasTirith.puedePasar(guerreroArmado))
+    }
+
+    test "Un personaje desarmado no puede pasar Minas Tirith" {
+        assert.notThat(minasTirith.puedePasar(guerreroDesarmado))
+    }
+
+    test "Gandalf pasa pero queda con 80 de vida por las 2 armas" {
+        gandalf.vidaGuerrero(100)
+        gandalf.armasGuerrero().clear()
+        gandalf.armasGuerrero().add(baculo)
+        gandalf.armasGuerrero().add(espada)
+        minasTirith.pasarPorAca(gandalf)
+        assert.equals(80, gandalf.vidaGuerrero())
+    }
+}
+
+describe "Lossarnach" {
+    test "Gandalf puede pasar Lossarnach" {
+        assert.that(lossarnach.puedePasar(gandalf))
+    } 
+
+    test "Gandalf con 100 de vida con armas queda en 104 de vida" {
+        gandalf.vidaGuerrero(100)
+        gandalf.armasGuerrero().clear()
+        gandalf.armasGuerrero().add(baculo)
+        gandalf.armasGuerrero().add(espada)
+        lossarnach.pasarPorAca(gandalf)
+        assert.equals(104, gandalf.vidaGuerrero())
+    }
+}  
+
+describe "Camino de Gondor" {
+    test "Gandalf puede atravesar el camino de Gondor" {
+        gandalf.vidaGuerrero(100)
+        gandalf.armasGuerrero().clear()
+        gandalf.armasGuerrero().add(baculo)
+        gandalf.armasGuerrero().add(espada)
+        assert.that(caminoDeGondor.puedeRecorrerCamino(gandalf))
+    }
+
+    test "Gandalf hace el camino y sufre efectos quedando con 80 de vida" {
+        gandalf.vidaGuerrero(100)
+        gandalf.armasGuerrero().clear()
+        gandalf.armasGuerrero().add(baculo)
+        gandalf.armasGuerrero().add(espada)
+        gandalf.recorrerCamino(caminoDeGondor)
+        assert.equals(80, gandalf.vidaGuerrero())
+    }
+
+    test "Gandalf hace el camino lebenin->lossarnach y sufre efectos quedando con 104 de vida" {
+        caminoDeGondor.lugares([lebennin, lossarnach])
+        gandalf.vidaGuerrero(100)
+        gandalf.armasGuerrero().clear()
+        gandalf.armasGuerrero().add(baculo)
+        gandalf.armasGuerrero().add(espada)
+        gandalf.recorrerCamino(caminoDeGondor)
+        assert.equals(104, gandalf.vidaGuerrero())
+    }
+}
+
+describe "Tom Bombadil" {
+    test "Tom Bombadil puede atravesar Lebennin" {
+        assert.that(lebennin.puedePasar(tomBombadil))
+    }
+
+    test "Tom Bombadil pasa camino de Gondor " {
+        caminoDeGondor.realizarCamino(tomBombadil)
+        assert.equals(2000, tomBombadil.vidaGuerrero())
     }
 }

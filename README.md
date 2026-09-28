@@ -1,6 +1,6 @@
 
 
-## 2026-o-repoBase
+## La Tierra Media - TP Objetos - Grupo paradigmaticos-
 
-Repositorio base plantilla para objetos
+
 

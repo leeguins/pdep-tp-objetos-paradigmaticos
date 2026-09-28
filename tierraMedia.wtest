@@ -1,0 +1,294 @@
+import tierraMedia.*
+
+/* -------------------- Objetos de Prueba ---------------------- */
+object personaPrueba
+{
+    var property vidaGuerrero = 200
+}
+
+object personaPrueba2
+{
+    var property vidaGuerrero = 5
+}
+
+object espadaPrueba
+{
+    var magia = magiaEnana
+
+    method magia(nuevaMagia) {
+        magia = nuevaMagia
+    }
+    
+    method poder(unGuerrero) {
+        return 10 * magia.valorMagico(unGuerrero)
+    }
+}
+
+object baculoPrueba {
+    var poderBase  = 100 
+
+    method tienePocaVida(guerrero) {
+        return guerrero.vidaGuerrero() < 10
+    }
+
+    method poderPotenciado(unGuerrero) {
+        if(self.tienePocaVida(unGuerrero))
+            return poderBase*2
+        else 
+            return poderBase
+    }
+
+    method poderBase(nuevoPoder) {
+        poderBase = nuevoPoder
+    }
+
+    method poder(unGuerrero) {
+        return 400.min(self.poderPotenciado(unGuerrero))
+    }
+}
+
+object flechaBroncePrueba
+{
+    var fechaLustrado = new Date(day = 1, month = 1, year = 2026)
+    var fechaUso = new Date(day = 5, month = 9, year = 2026)
+
+    method fechaLustrado(nuevaFecha) {
+        fechaLustrado = nuevaFecha
+    }
+
+    method fechaUso(nuevaFecha) {
+        fechaUso = nuevaFecha
+    }
+
+    method poderLustrado() {
+        const diasPasados = fechaUso - fechaLustrado
+        return 100 - diasPasados
+    }
+
+    method poderFlecha()
+    {
+        return 0.max(self.poderLustrado())
+    }
+}
+
+object armaDePoderCien {
+    method poder(unGuerrero) {
+        return 100
+    }
+}
+
+object armaDePoderCientoCincuenta {
+    method poder(unGuerrero) {
+        return 150
+    }
+}
+object flechaHierroPrueba
+{
+    const poderActual = 70
+    var oxidada = false
+
+    method poderFlecha()
+    {
+        if(oxidada)
+        {
+            return poderActual / 2
+        }
+        
+        return poderActual
+    }
+}
+
+object guerreroPoderoso {
+    method poder() {
+        return 3000
+    }
+}
+
+object guerreroDebil {
+    method poder() {
+        return 100
+    }
+}
+
+object guerreroArmado {
+    method tamanioArsenal() {
+        return 1
+    }
+}
+
+object guerreroDesarmado {
+    method tamanioArsenal() {
+        return 0
+    }
+}
+
+/* ----------------------------------------------------- */
+
+/* ----- Test Armas Peligrosas ----- */
+
+describe "Baculo" {
+    test "El poder de un báculo, para un guerrero con mucha vida, debe ser 250" {
+        assert.equals(baculo.poder(personaPrueba), 250)
+    }
+    test "El poder de un báculo, para un guerrero con poca vida, tiene top 200" {
+        assert.equals(baculo.poder(personaPrueba2), 400)
+    }
+    test "El poder de un báculo con poder base 100, para un guerrero de poca vida, debe ser 200" {
+        assert.equals(baculoPrueba.poder(personaPrueba2), 200)
+    }
+}
+
+describe "Espada Elfica" {
+    test "El poder de un espada con magia elfica, para cualquier guerrero, debe ser 250" {
+        assert.equals(espada.poder(personaPrueba), 250)
+    }
+}
+
+describe "Espada Enana" {
+    test "El poder de un espada con magia enana, para un guerrero con 100 de vida, debe ser 500" {
+        assert.equals(espadaPrueba.poder(gandalf), 500)
+    }
+}
+
+describe "Flecha de bronce" {
+    test "El poder de una flecha de bronce lustrada el 01/01/2026 y usada el 05/01/2026, debe ser 96" {
+        assert.equals(flechaBronce.poderFlecha(), 96)
+    }
+    test "El poder de una flecha de bronce lustrada el 01/01/2026 y usada el 05/09/2026, debe ser 0" {
+        assert.equals(flechaBroncePrueba.poderFlecha(), 0)
+    }
+}
+
+describe "Gandalf" {
+    test "El poder de Gandalf, con vida 100 y armas de poder 100 y 150, debe ser 2000" {
+        gandalf.vidaGuerrero(100)
+        gandalf.armasGuerrero().clear()
+        gandalf.armasGuerrero().add(armaDePoderCien)
+        gandalf.armasGuerrero().add(armaDePoderCientoCincuenta)
+        assert.equals(2000, gandalf.poder())
+    }
+
+    test "El poder de Gandalf, con poca vida y armas de poder 100 y 150, debe ser 1500" {
+        gandalf.vidaGuerrero(5)
+        gandalf.armasGuerrero().clear()
+        gandalf.armasGuerrero().add(armaDePoderCien)
+        gandalf.armasGuerrero().add(armaDePoderCientoCincuenta)
+        assert.equals(1500, gandalf.poder())
+    }
+     // Acá podriamos agregar dos metodos de soltarArma agregaArma dentro de gandalf y que no quede el add y clear 
+}
+
+
+
+describe "Flecha de aluminio" {
+    test "El poder de una flecha de aluminio, debe ser 50" {
+        assert.equals(flechaAluminio.poderFlecha(), 50)
+    }
+}
+
+describe "Flecha de hierro" {
+    test "El poder de una flecha de hierro sin oxidar, debe ser 70" {
+        assert.equals(flechaHierroPrueba.poderFlecha(), 70)
+    }
+    test "El poder de una flecha de hierro oxidada, debe ser 35" {
+        assert.equals(flechaHierro.poderFlecha(), 35)
+    }
+}
+
+describe "Caja de flechas negras" {
+    test "El poder de la caja de flechas negras, con aluminio, hierro sin oxidar y bronce, debe ser 83" {
+        flechaHierro.sacarOxido()
+        assert.equals(83, cajaFlechasNegras.poder(personaPrueba))
+    }
+}
+
+describe "Lebennin" {
+    test "Un guerrero con poder 3000 puede pasar por Lebennin" {
+        assert.that(lebennin.puedePasar(guerreroPoderoso))
+    }
+
+    test "Un guerrero con poder 100 no puede pasar por Lebennin" {
+        assert.notThat(lebennin.puedePasar(guerreroDebil))
+    }
+
+    test "Gandalf pasa por Lebennin" {
+        gandalf.vidaGuerrero(100)
+        lebennin.pasarPorAca(gandalf)
+        assert.equals(100, gandalf.vidaGuerrero())
+    } 
+    
+}
+
+describe "Minas Tirith" {
+    test "Un personaje armado puede pasar Minas Tirith" {
+        assert.that(minasTirith.puedePasar(guerreroArmado))
+    }
+
+    test "Un personaje desarmado no puede pasar Minas Tirith" {
+        assert.notThat(minasTirith.puedePasar(guerreroDesarmado))
+    }
+
+    test "Gandalf pasa pero queda con 80 de vida por las 2 armas" {
+        gandalf.vidaGuerrero(100)
+        gandalf.armasGuerrero().clear()
+        gandalf.armasGuerrero().add(baculo)
+        gandalf.armasGuerrero().add(espada)
+        minasTirith.pasarPorAca(gandalf)
+        assert.equals(80, gandalf.vidaGuerrero())
+    }
+}
+
+describe "Lossarnach" {
+    test "Gandalf puede pasar Lossarnach" {
+        assert.that(lossarnach.puedePasar(gandalf))
+    } 
+
+    test "Gandalf con 100 de vida con armas queda en 104 de vida" {
+        gandalf.vidaGuerrero(100)
+        gandalf.armasGuerrero().clear()
+        gandalf.armasGuerrero().add(baculo)
+        gandalf.armasGuerrero().add(espada)
+        lossarnach.pasarPorAca(gandalf)
+        assert.equals(104, gandalf.vidaGuerrero())
+    }
+}  
+
+describe "Camino de Gondor" {
+    test "Gandalf puede atravesar el camino de Gondor" {
+        gandalf.vidaGuerrero(100)
+        gandalf.armasGuerrero().clear()
+        gandalf.armasGuerrero().add(baculo)
+        gandalf.armasGuerrero().add(espada)
+        assert.that(caminoDeGondor.puedeRecorrerCamino(gandalf))
+    }
+
+    test "Gandalf hace el camino y sufre efectos quedando con 80 de vida" {
+        gandalf.vidaGuerrero(100)
+        gandalf.armasGuerrero().clear()
+        gandalf.armasGuerrero().add(baculo)
+        gandalf.armasGuerrero().add(espada)
+        gandalf.recorrerCamino(caminoDeGondor)
+        assert.equals(80, gandalf.vidaGuerrero())
+    }
+
+    test "Gandalf hace el camino lebenin->lossarnach y sufre efectos quedando con 104 de vida" {
+        caminoDeGondor.lugares([lebennin, lossarnach])
+        gandalf.vidaGuerrero(100)
+        gandalf.armasGuerrero().clear()
+        gandalf.armasGuerrero().add(baculo)
+        gandalf.armasGuerrero().add(espada)
+        gandalf.recorrerCamino(caminoDeGondor)
+        assert.equals(104, gandalf.vidaGuerrero())
+    }
+}
+
+describe "Tom Bombadil" {
+    test "Tom Bombadil puede atravesar Lebennin" {
+        assert.that(lebennin.puedePasar(tomBombadil))
+    }
+
+    test "Tom Bombadil pasa camino de Gondor " {
+        caminoDeGondor.realizarCamino(tomBombadil)
+        assert.equals(2000, tomBombadil.vidaGuerrero())
+    }
+}

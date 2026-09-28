@@ -1,4 +1,4 @@
-import example.*
+import tierraMedia.*
 
 /* -------------------- Objetos de Prueba ---------------------- */
 object personaPrueba

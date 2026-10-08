@@ -1,7 +1,13 @@
 
 /* ENTREGA 1 */
 
+/*
+Integrante 1
 
+El báculo otorga como máximo 400 unidades de poder. 
+Se calcula con un poder base de 250 que se duplica si el guerrero que lo utiliza tiene poca vida. 
+El poder base puede cambiar a lo largo del tiempo.
+*/
 class Baculo 
 {
     
@@ -26,6 +32,13 @@ class Baculo
     }
 }
 
+/*
+Integrante 2
+
+En el caso de la espada, el poder que otorga es de 10 veces por el valor dado por la magia que la rige. 
+Su espada (muy parecida a Glamdring)  en el mundo de objetos es un poco influenciable y puede cambiar la magia que la afecta. 
+Inicialmente es magia élfica y vale 25 siempre. Si fuera enana, es la mitad de la vida que tiene el mago que la utiliza.
+*/
 object magiaElfica
 {
     method valorMagico(unGuerrero)
@@ -33,6 +46,7 @@ object magiaElfica
         return 25
     }
 }
+
 object magiaEnana
 {
     method valorMagico(unGuerrero)
@@ -41,7 +55,7 @@ object magiaEnana
     }
 }
 
-class Espada
+/*class Espada
 {
     var magia 
 
@@ -55,8 +69,15 @@ class Espada
         return 10 * magia.valorMagico(unGuerrero)
     }
 
-}
+}*/
 
+/*
+Integrante 3
+
+La flecha de bronce otorga inicialmente 100 puntos pero depende de cuánto tiempo lleva lustrada.
+Este tipo de flecha se lustra en una fecha en particular y resta un punto por cada día que pasa luego de lustrar hasta llegar a 0. 
+Por ejemplo si se lustra el 01/01/2024 y se usa el 05/01/2024, suma 96 puntos.
+*/
 class FlechaBronce
 {
     var fechaLustrado = new Date(day = 1, month = 1, year = 2026)
@@ -84,85 +105,64 @@ class FlechaBronce
     }
 }
 
-class FlechaAluminio
+/*
+Gandalf
+
+Existen diversos guerreros que pueden estar vagando por la Tierra Media, portando el anillo por ahí, como si nada estuviera pasando.
+Uno de ellos es Gandalf “El Gris”, como se lo conoce normalmente (porque tiene varios nombres, varían dependiendo a quien se le pregunte). 
+Gandalf tiene un nivel de vida que es en principio de 100.
+Lleva consigo ciertas armas, como su báculo, su espada (muy parecida a Glamdring) y una caja de flechas negras.
+
+Su poder se calcula como: cantidad de vida * 15 + Sumatoria del Poder de sus Armas * 2 pero en el caso de que tenga poca vida (es decir que su nivel de vida sea menor a 10), 
+la fórmula cambia de la siguiente manera: cantidad de vida * 200 + Sumatoria del Poder de sus Armas * 2
+
+*/
+/*class Guerrero
 {
-    var poderActual = 50
+    var property vidaGuerrero
+    const armasGuerrero = []
+    const poderBase
 
-    method modificarPoder(nuevoValor)
+    method agregarArma (arma)
     {
-        poderActual = nuevoValor
+        armasGuerrero.add(arma)
     }
 
-    method poderFlecha()
+    method armasGuerrero() 
     {
-        return poderActual
-    }
-}
-
-class FlechaHierro
-{
-    const poderActual = 70
-    var oxidada = true
-
-    method sacarOxido()
-    {
-        oxidada = false
+        return armasGuerrero
     }
 
-    method oxidar()
+    method tamanioArsenal() 
     {
-        oxidada = true
+       return armasGuerrero.size()
     }
 
-    method poderFlecha()
+    method poderArmas()
     {
-        if(oxidada)
+        return armasGuerrero.sum({arma => arma.poder(self)})
+    }
+
+    method poder() = poderBase
+
+    method sacarVida(unValor) 
+    {
+        vidaGuerrero = 0.max(vidaGuerrero - unValor)
+    }
+
+    method aumentarVida(unValor) 
+    {
+        vidaGuerrero = vidaGuerrero + unValor
+    }
+
+    method recorrerCamino(caminoDeGondor) 
+    {
+        if(caminoDeGondor.puedeRecorrerCamino(self))
         {
-            return poderActual / 2
+            caminoDeGondor.realizarCamino(self)
         }
-        
-        return poderActual
     }
-}
-
-class CajaFlechasNegras
-{
-    const flechasDisponibles = []
-
-    method agregarFlecha(flecha)
-    {
-        if(flechasDisponibles.size() <= 3)
-        {
-            flechasDisponibles.add(flecha)
-        }
-        else
-        {
-            throw new DomainException(message= "No hay espacio suficiente en la caja")
-        }
-  
-    }
-
-    method sacarFlecha(flecha)
-    {
-        flechasDisponibles.remove(flecha)
-    }
-    
-    method calcularPoderFlecha(flecha)
-    {
-        return flecha.poderFlecha()      
-    }
-
-    method poderPromedio()
-    {
-        return flechasDisponibles.filter({flecha => self.calcularPoderFlecha(flecha) > 50}).average({flecha => self.calcularPoderFlecha(flecha)})
-    }
-
-    method poder(unGuerrero)
-    {
-        return self.poderPromedio()
-
-    }
-}
+}*/
 
 object gandalf
 {
@@ -220,55 +220,137 @@ object gandalf
 
 }
 
-class Guerrero
+/*
+Integrante 4
+
+Además necesitamos modelar la caja de flechas negras que tiene una cantidad disponible para poder lanzar. 
+Posee tres flechas y cada una tiene su valor particular dependiendo de la materialidad con la que se construyó.
+
+-La flecha de aluminio tiene un valor de 50 y puede variar con el tiempo.
+-La flecha de hierro otorga 70 puntos pero si están oxidadas su valor se reduce en un 50%.
+-la flecha de bronce anteriormente modelada.
+
+La caja otorga el promedio de las flechas de más de 50 puntos, 
+porque el resto resulta insignificante
+*/
+class FlechaAluminio
 {
-    var property vidaGuerrero
-    const armasGuerrero = []
-    const poderBase
+    var poderActual = 50
 
-    method agregarArma (arma)
+    method modificarPoder(nuevoValor)
     {
-        armasGuerrero.add(arma)
+        poderActual = nuevoValor
     }
 
-    method armasGuerrero() 
+    method poderFlecha()
     {
-        return armasGuerrero
+        return poderActual
+    }
+}
+
+class FlechaHierro
+{
+    const poderActual = 70
+    var oxidada = true
+
+    method sacarOxido()
+    {
+        oxidada = false
     }
 
-    method tamanioArsenal() 
+    method oxidar()
     {
-       return armasGuerrero.size()
+        oxidada = true
     }
 
-    method poderArmas()
+    method poderFlecha()
     {
-        return armasGuerrero.sum({arma => arma.poder(self)})
-    }
-
-    method poder() = poderBase
-
-    method sacarVida(unValor) 
-    {
-        vidaGuerrero = 0.max(vidaGuerrero - unValor)
-    }
-
-    method aumentarVida(unValor) 
-    {
-        vidaGuerrero = vidaGuerrero + unValor
-    }
-
-    method recorrerCamino(caminoDeGondor) 
-    {
-        if(caminoDeGondor.puedeRecorrerCamino(self))
+        if(oxidada)
         {
-            caminoDeGondor.realizarCamino(self)
+            return poderActual / 2
         }
+        
+        return poderActual
+    }
+}
+
+/*class FlechaBronce
+{
+    var fechaLustrado = new Date(day = 1, month = 1, year = 2026)
+    var fechaUso = new Date(day = 1, month = 1, year = 2026)
+
+    method fechaLustrado(nuevaFecha) 
+    {
+        fechaLustrado = nuevaFecha
+    }
+
+    method fechaUso(nuevaFecha) 
+    {
+        fechaUso = nuevaFecha
+    }
+
+    method poderLustrado() 
+    {
+        const diasPasados = fechaUso - fechaLustrado
+        return 100 - diasPasados
+    }
+
+    method poderFlecha()
+    {
+        return 0.max(self.poderLustrado())
+    }
+}*/
+
+class CajaFlechasNegras
+{
+    const flechasDisponibles = []
+
+    method agregarFlecha(flecha)
+    {
+        if(flechasDisponibles.size() <= 3)
+        {
+            flechasDisponibles.add(flecha)
+        }
+        else
+        {
+            throw new DomainException(message= "No hay espacio suficiente en la caja")
+        }
+  
+    }
+
+    method sacarFlecha(flecha)
+    {
+        flechasDisponibles.remove(flecha)
+    }
+    
+    method calcularPoderFlecha(flecha)
+    {
+        return flecha.poderFlecha()      
+    }
+
+    method poderPromedio()
+    {
+        return flechasDisponibles.filter({flecha => self.calcularPoderFlecha(flecha) > 50}).average({flecha => self.calcularPoderFlecha(flecha)})
+    }
+
+    method poder(unGuerrero)
+    {
+        return self.poderPromedio()
+
     }
 }
 
 /* ----- Zonas de la Tierra Media ----- */
-object lebennin {
+
+/*
+Integrante 1
+
+Lebennin es una zona de la Tierra Media con guardias. Aquí solo se permite pasar por ella a quienes tengan más de 1500 de poder si hay más de 3 guardias, 
+de lo contrario deben tener más de 1000 de poder. 
+Los personajes que la logran atravesar, no les pasa nada.
+*/
+object lebennin 
+{
     
     var property guardias = 3
 
@@ -301,7 +383,14 @@ object lebennin {
     }      
 }
 
-object minasTirith {
+/*
+Integrante 2
+
+Por Minas Tirith, en cambio, no hay chances de pasar sin tener armas. 
+El pasar por esta zona complicada implica perder 10 unidades de vida por cada arma que tiene el guerrero.
+*/
+object minasTirith 
+{
     
     method puedePasar(unGuerrero) 
     {
@@ -321,7 +410,14 @@ object minasTirith {
     }      
 }
 
-object lossarnach {
+/*
+Integrante 3
+
+Lossarnach es otro lugar cercano, para el cual no hay requisitos para poder atravesarlo. 
+Tanto es su simpleza que el guerrero la pasa bien y  aumenta su vida en 2 unidades  por cada arma que posee.
+*/
+object lossarnach 
+{
     
     method puedePasar(unGuerrero) 
     {
@@ -338,6 +434,14 @@ object lossarnach {
     }      
 }
 
+/*
+Integrante 4
+
+También, un individuo puede intentar recorrer el camino de Gondor, 
+que conduce de Lebennin a Minas Tirith. 
+Para poder hacerlo debe poder recorrer ambas zonas y cuando lo hace sufre también las consecuencias correspondientes.
+Eventualmente, el camino de Gondor puede modificarse y por ejemplo ir desde Lebennin a Lossarnach, o cualquier otra combinación posible.
+*/
 class CaminoDeGondor {
     
     var property lugares = [lebennin, minasTirith]
@@ -363,7 +467,17 @@ class CaminoDeGondor {
     }
 }
 
-/* ----- Tom Bombadil ----- */
+
+/* 
+----- Tom Bombadil ----- 
+
+Tom es un habitante más de la Tierra Media, es un sujeto muy particular y alegre. 
+Usa una chaqueta azul brillante y unas botas amarillas y en su alto sombrero lleva una pluma de ala de cisne.
+
+La particularidad de Tom, es que tiene el calendario de vacunación al día cosa que lo hace inmune a todo lo que le pase, 
+su poder es siempre de 2000, y pareciera ser hijo de Rambo porque aunque no se sepa con qué… siempre tiene 100 armas. 
+De esta forma, puede atravesar cualquier zona conocida de la Tierra Media sin sufrir alteración alguna.
+*/
 object tomBombadil
 {
     const vidaGuerrero = 2000
@@ -385,6 +499,241 @@ object tomBombadil
 }
 
 
-
 /* ENTREGA 2 */
+
+/*
+Espada: Cada espada tiene un multiplicador de poder entre 1 y 20, 
+y además, mantiene el valor extra según el origen, 
+pero ahora se considera como origen la naturaleza del guerrero que la porta.
+Repasando cada uno de los valores de los orígenes:
+    ○ Élfico: 25
+    ○ Enano: 20
+    ○ Humano: 15
+    ○ Cualquier otro: 10 veces la cantidad
+    de armas que lleve
+*/
+class Espada
+{
+    var multiplicadorBase
+    
+    method modifMultiplicadorBase (valor)
+    {
+        multiplicadorBase = valor
+    }
+
+    method poder(guerrero)
+    {
+        return guerrero.potenciador() * multiplicadorBase
+    }
+}
+
+class EspadaGlamdring inherits Espada
+{
+    var magia 
+
+    method magia(nuevaMagia) 
+    {
+        magia = nuevaMagia
+    }
+    
+    override method poder(unGuerrero)
+    {
+        return 10 * magia.valorMagico(unGuerrero)
+    }
+
+}
+
+/*
+Báculo: Cada báculo sabe cual es el poder que otorga.
+*/
+/*class Baculo 
+{
+    
+    var poderBase  = 250 
+
+    method poderBase(nuevoPoder) 
+    {
+        poderBase = nuevoPoder
+    }
+
+    method poderPotenciado(unGuerrero) 
+    {
+        if(unGuerrero.vida() <= 10 )
+            return poderBase*2
+        else 
+            return poderBase
+    }
+
+    method poder(unGuerrero) 
+    {
+        return 400.min(self.poderPotenciado(unGuerrero))
+    }
+}*/
+
+/*
+Daga: La daga es como una espada chiquita, por lo tanto el poder que otorga, 
+es la mitad que daría una espada con sus mismas características.
+*/
+class Daga inherits Espada
+{
+    override method poder(unguerrero)
+    {
+        return (unguerrero.potenciador() * multiplicadorBase) / 2
+    }
+
+}
+
+/*
+Hacha: El hacha está compuesta de un mango, y una hoja metálica con filo. Y se calcula como
+el largo del mango multiplicado por el peso de la hoja.
+*/
+class Hacha
+{
+    const unMango
+    const unaHoja
+
+    method poder(unguerrero)
+    {
+        return unMango.largo() * unaHoja.peso()
+    }
+}
+
+class Mango 
+{
+    var property largo
+}
+
+class Hoja
+{
+    var property peso 
+}
+
+/*
+Guerreros
+
+Todos los guerreros tienen cosas en común. Por ejemplo, todos son capaces de llevar armas y pueden
+también transportar elementos útiles para la realización de su viaje. Pero sin embargo, son de diferente
+naturaleza y hay características propias que dependen de cada uno.
+Esta tensión entre similitudes y diferencias se ve reflejada a la hora de calcular el poder de los
+guerreros, de la siguiente manera.
+*/
+
+class Guerrero
+{
+    
+    const naturaleza
+    const poderBase
+
+    var property vidaGuerrero
+    
+    const armasGuerrero = []
+    const elementos = []
+    
+
+    method agregarArma (arma)
+    {
+        armasGuerrero.add(arma)
+    }
+
+    method armasGuerrero() 
+    {
+        return armasGuerrero
+    }
+
+    method tamanioArsenal() 
+    {
+       return armasGuerrero.size()
+    }
+
+
+
+    method poderArmas()
+    {
+        return armasGuerrero.sum({arma => arma.poder(self)})
+    }
+
+    method poder() = poderBase
+
+    
+    
+    
+    method sacarVida(unValor) 
+    {
+        vidaGuerrero = 0.max(vidaGuerrero - unValor)
+    }
+
+    method aumentarVida(unValor) 
+    {
+        vidaGuerrero = vidaGuerrero + unValor
+    }
+
+    
+    
+    
+    method recorrerCamino(caminoDeGondor) 
+    {
+        if(caminoDeGondor.puedeRecorrerCamino(self))
+        {
+            caminoDeGondor.realizarCamino(self)
+        }
+    }
+}
+
+class Hobbits inherits Guerrero
+{
+    override method poder()
+    {
+        return vidaGuerrero + elementos.size() * self.poderArmas()
+    }
+}
+
+class Enanos inherits Guerrero
+{
+    override method poder()
+    {
+        return vidaGuerrero + poderBase + self.poderArmas()
+    }
+}
+
+class Elfos inherits Guerrero
+{
+
+    const destrezaBase = 2
+
+    var property destrezaPropia
+
+    method modifDestreza(valor)
+    {
+        destrezaPropia = valor
+    }
+
+    override method poder()
+    {
+        return vidaGuerrero + (destrezaBase + destrezaPropia) * self.poderArmas()
+    }
+}
+
+class Humanos inherits Guerrero
+{
+
+    var property limitadorPoder 
+
+    override method poder()
+    {
+        return vidaGuerrero + self.poderArmas() / limitadorPoder
+    }
+}
+
+class Maiar inherits Guerrero
+{
+
+    var property limitadorPoder 
+
+    override method poder()
+    {
+        return vidaGuerrero + self.poderArmas() / limitadorPoder
+    }
+}
+
+
 

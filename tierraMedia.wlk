@@ -164,7 +164,7 @@ la fórmula cambia de la siguiente manera: cantidad de vida * 200 + Sumatoria de
     }
 }*/
 
-object gandalf
+/*object gandalf
 {
     var property nombre  = "Gandalf el Gris"
     var property vidaGuerrero = 100
@@ -218,7 +218,7 @@ object gandalf
         }
     }
 
-}
+}*/
 
 /*
 Integrante 4
@@ -620,7 +620,7 @@ guerreros, de la siguiente manera.
 
 class Guerrero
 {
-    
+    const nombre
     const naturaleza
     const poderBase
 
@@ -679,6 +679,12 @@ class Guerrero
     }
 }
 
+/*
+Hobbits: Los hobbits son habitantes medianos del lugar. 
+No representan una gran amenaza y su
+cálculo de poder está dado por la siguiente fórmula:
+○ vida actual + cantidad de elementos * sumatoria del poder de sus armas
+*/
 class Hobbits inherits Guerrero
 {
     override method poder()
@@ -687,6 +693,11 @@ class Hobbits inherits Guerrero
     }
 }
 
+/*
+ Enanos: Los enanos suelen tener armas muy poderosas, por lo tanto su poder es:
+○ vida actual + factor de poder * sumatoria del poder de sus armas
+El factor de poder, es un número que depende de cada enano.
+*/
 class Enanos inherits Guerrero
 {
     override method poder()
@@ -695,6 +706,13 @@ class Enanos inherits Guerrero
     }
 }
 
+/*
+Elfos: Una de las características de los elfos es su destreza, representada por un número. Por
+este motivo es que debemos considerarla a la hora de calcular su poder:
+○ vida actual + (destrezaBase + destrezaPropia) * sumatoria del poder de
+sus armas
+○ La destreza base, es común para todos los elfos y puede cambiar. Hoy en día es de 2.
+*/
 class Elfos inherits Guerrero
 {
 
@@ -713,6 +731,12 @@ class Elfos inherits Guerrero
     }
 }
 
+/*
+Humanos: Probablemente son los más comunes, pero no por eso los menos importantes. Su
+cálculo de poder está dado por:
+○ vida actual + sumatoria del poder de sus armas / limitador de Poder
+El imitador de poder es particular para cada ser humano
+*/
 class Humanos inherits Guerrero
 {
 
@@ -724,16 +748,64 @@ class Humanos inherits Guerrero
     }
 }
 
+/*
+Maiar: Gandalf es uno de ellos. La forma en la cual calcula su poder es representativa de todos
+los maiares. Los valores de 15 y 300 son factores de poder básico y poder bajo amenaza,
+respectivamente, que podrían llegar a cambiar.
+ vida actual * factor actual + 2 * sumatoria del poder de sus armas
+
+*/
 class Maiar inherits Guerrero
 {
+    var property poderBasico = 15
+    var property poderBajoAmenaza = 300 
 
-    var property limitadorPoder 
+    var property bajoAmenaza = false 
+
+    /*method poder() //tomado a Gandalf
+    {   
+        if (self.vidaGuerrero() < 10)
+        {
+            return (vidaGuerrero * 200) + (self.poderArmas() * 2)
+        }
+
+        return (vidaGuerrero * 15) + (self.poderArmas() * 2)
+    }*/
 
     override method poder()
     {
-        return vidaGuerrero + self.poderArmas() / limitadorPoder
+        if(bajoAmenaza)
+        {
+            return vidaGuerrero * poderBajoAmenaza + 2 * self.poderArmas()
+        }
+        else
+        {
+            return vidaGuerrero * poderBasico + 2 * self.poderArmas()
+        }
     }
+
 }
+
+/*
+Gollum: Gollum es un ser particular dentro de la Tierra Media que fue totalmente afectado 
+por el anillo único. Su cálculo de poder es como el de cualquier hobbit, 
+pero la mitad de ese.
+*/
+
+class Gollum inherits Hobbits
+{
+    override method poder()
+    {
+        return super() / 2
+    }
+
+}
+
+/*
+Modelado para Tests
+*/
+
+
 
 
 

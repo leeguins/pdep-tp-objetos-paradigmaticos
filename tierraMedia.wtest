@@ -413,9 +413,117 @@ describe "Guerreros - Maiar" {
     }
 }
 
-describe "Tom Bombadil - Entrega 2" {
+describe "Tom Bombadil - Entrega 2 - Poder en 10000000" {
     test "El poder de Tom Bombadil es diez millones" {
         assert.equals(10000000, tomBombadil.poder())
+    }
+}
+
+describe "Caminos - ZonaDeLebennin" {
+    test "no pasa por debajo del umbral" {
+        const zona = new ZonaDeLebennin()
+        const debil = new Humano(vida = 10, limitadorPoder = 1, arsenal = [])
+        assert.notThat(zona.puedePasar(debil))
+    }
+
+    test "sube el umbral a 1500 con mas de 3 guardias" {
+        const zonaConMuchosGuardias = new ZonaDeLebennin(guardias = 4)
+        const guerrero = new Humano(vida = 1200, limitadorPoder = 1, arsenal = [])
+        assert.notThat(zonaConMuchosGuardias.puedePasar(guerrero))
+    }
+}
+
+describe "Caminos - ZonaQueRequiereArmas" {
+    test "desarmado no pasa" {
+        const zona = new ZonaQueRequiereArmas(vidaPerdidaPorArma = 10)
+        const desarmado = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        assert.notThat(zona.puedePasar(desarmado))
+    }
+
+    test "la consecuencia resta vida segun la cantidad de armas" {
+        const zona = new ZonaQueRequiereArmas(vidaPerdidaPorArma = 10)
+        const armado = new Humano(vida = 100, limitadorPoder = 1, arsenal = [new Baculo(poderBase = 1), new Baculo(poderBase = 1)])
+        zona.pasarPorAca(armado)
+        assert.equals(80, armado.vida())
+    }
+}
+
+describe "Caminos - ZonaLibre" {
+    test "la consecuencia suma vida segun la cantidad de armas" {
+        const zona = new ZonaLibre()
+        const guerrero = new Humano(vida = 100, limitadorPoder = 1, arsenal = [new Baculo(poderBase = 1), new Baculo(poderBase = 1), new Baculo(poderBase = 1)])
+        zona.pasarPorAca(guerrero)
+        assert.equals(106, guerrero.vida())
+    }
+}
+
+describe "Caminos - Grupo" {
+    test "uno que no cumple el requisito frena a todo el grupo" {
+        const zona = new ZonaQueRequiereArmas(vidaPerdidaPorArma = 10)
+        const armado = new Humano(vida = 100, limitadorPoder = 1, arsenal = [new Baculo(poderBase = 1)])
+        const desarmado = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        const grupo = new Grupo(guerreros = [armado, desarmado])
+        assert.notThat(zona.puedePasar(grupo))
+    }
+
+    test "la consecuencia afecta a todos los integrantes" {
+        const zona = new ZonaLibre()
+        const g1 = new Humano(vida = 100, limitadorPoder = 1, arsenal = [new Baculo(poderBase = 1)])
+        const g2 = new Humano(vida = 100, limitadorPoder = 1, arsenal = [new Baculo(poderBase = 1)])
+        const grupo = new Grupo(guerreros = [g1, g2])
+        zona.pasarPorAca(grupo)
+        assert.equals(102, g1.vida())
+        assert.equals(102, g2.vida())
+    }
+}
+
+describe "Caminos - Requerimientos extra" {
+    test "requerimiento de elemento cumple o no segun la suma del grupo" {
+        const g1 = new Humano(vida = 10, limitadorPoder = 1, arsenal = [], objetos = ["Lembas", "Lembas"])
+        const g2 = new Humano(vida = 10, limitadorPoder = 1, arsenal = [], objetos = ["Lembas"])
+        const grupo = new Grupo(guerreros = [g1, g2])
+        assert.that(new RequerimientoDeElemento(nombre = "Lembas", cantidad = 3).seCumple(grupo))
+        assert.notThat(new RequerimientoDeElemento(nombre = "Lembas", cantidad = 4).seCumple(grupo))
+    }
+
+    test "requerimiento de guerrero alcanza con que uno solo cumpla" {
+        const unArmado = new Humano(vida = 10, limitadorPoder = 1, arsenal = [new Baculo(poderBase = 1), new Baculo(poderBase = 1)])
+        const otro = new Humano(vida = 10, limitadorPoder = 1, arsenal = [])
+        const grupo = new Grupo(guerreros = [unArmado, otro])
+        const req = new RequerimientoDeGuerrero(condicion = { g => g.tamanioArsenal() > 1 })
+        assert.that(req.seCumple(grupo))
+    }
+
+    test "una zona puede cumplir la base pero no el requerimiento extra" {
+        const zona = new ZonaLibre(requerimientosExtra = [new RequerimientoDeElemento(nombre = "Lembas", cantidad = 5)])
+        const sinLembas = new Humano(vida = 10, limitadorPoder = 1, arsenal = [], objetos = [])
+        assert.notThat(zona.puedePasar(sinLembas))
+    }
+}
+
+describe "Caminos - Camino" {
+    test "una sola zona que falla frena todo el camino" {
+        const camino = new Camino(lugares = [new ZonaLibre(), new ZonaQueRequiereArmas(vidaPerdidaPorArma = 10)])
+        const desarmado = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        assert.notThat(camino.puedeRecorrerCamino(desarmado))
+    }
+}
+
+describe "Caminos - Region de Gondor" {
+    test "un guerrero fuerte y armado puede recorrerlo entero" {
+        const guerrero = new Humano(vida = 2000, limitadorPoder = 1, arsenal = [new Baculo(poderBase = 50)])
+        assert.that(gondor.camino().puedeRecorrerCamino(guerrero))
+    }
+
+    test "un desarmado no puede, lo frena Minas Tirith" {
+        const guerrero = new Humano(vida = 2000, limitadorPoder = 1, arsenal = [])
+        assert.notThat(gondor.camino().puedeRecorrerCamino(guerrero))
+    }
+
+    test "recorrerlo aplica las 3 consecuencias en orden" {
+        const guerrero = new Humano(vida = 2000, limitadorPoder = 1, arsenal = [new Baculo(poderBase = 50)])
+        guerrero.recorrerCamino(gondor.camino())
+        assert.equals(1992, guerrero.vida())
     }
 }
 

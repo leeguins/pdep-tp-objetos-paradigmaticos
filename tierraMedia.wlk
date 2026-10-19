@@ -452,7 +452,23 @@ class Guerrero {
     return arsenal.sum({arma => arma.poder(self)})
   }
 
-  method poder() 
+  method esGrupo() = false
+
+  method sacarVida(unValor) {
+    vida = 0.max(vida - unValor)
+  }
+
+  method aumentarVida(unValor) {
+    vida = vida + unValor
+  }
+
+  method recorrerCamino(camino) {
+    if (camino.puedeRecorrerCamino(self)) {
+      camino.realizarCamino(self)
+    }
+  }
+
+  method poder()
 }
 
 // Defino la clase para los Hobbits
@@ -540,3 +556,147 @@ class Maiar inherits Guerrero (naturaleza = otraNaturaleza) {
   }
 }
 
+// ----- Los Caminos de la Tierra Media -----
+
+// validacion de entidad para ver si es un grupo o si es un guerrero individual, y devolver la lista de integrantes}
+// Grupo tiene esGrupo en true, y guerrero en false.
+object gruposHelper {
+  method integrantesDe(entidad) {
+    if (entidad.esGrupo())
+      return entidad.guerreros()
+    else
+      return [entidad] // lista de 1 elemento, el guerrero solo
+  }
+}
+
+
+class Grupo {
+  var property guerreros = []
+
+  method esGrupo() = true
+
+  method recorrerCamino(camino) {
+    if (camino.puedeRecorrerCamino(self)) {
+      camino.realizarCamino(self)
+    }
+  }
+}
+
+class Zona {
+  var property requerimientosExtra = []
+
+  method puedePasar(entidad) {
+    if (!self.cumpleRequisitoBase(entidad)) {
+      return false
+    }
+    if (!requerimientosExtra.isEmpty()) {
+      return requerimientosExtra.all({ r => r.seCumple(entidad) })
+    }
+    return true
+  }
+
+  method pasarPorAca(entidad) {
+    if (self.puedePasar(entidad)) {
+      self.aplicarConsecuencia(entidad)
+    }
+  }
+
+  // Esqueletos para overridear despues en cada zona.
+  method cumpleRequisitoBase(entidad) 
+  method aplicarConsecuencia(entidad)
+}
+
+// Lebennin: solo pasan quienes tengan más de cierto poder. No hay consecuencia.
+class ZonaConPoderMinimo inherits Zona {
+  var poderMinimoValor = 0
+
+  method poderMinimo() = poderMinimoValor
+
+  override method cumpleRequisitoBase(entidad) {
+    return gruposHelper.integrantesDe(entidad).all({ g => g.poder() > self.poderMinimo() })
+  }
+
+  override method aplicarConsecuencia(entidad) {
+  } // no hace nada, pero la tengo que traer igual
+}
+
+// Lebennin en particular: el umbral sube a 1500 si hay más de 3 guardias.
+class ZonaDeLebennin inherits ZonaConPoderMinimo {
+  var property guardias = 3
+
+  override method poderMinimo() {
+    if (guardias > 3)
+      return 1500
+    else
+      return 1000
+  }
+}
+
+// Minas Tirith: hace falta estar armado, y se pierde vida por cada arma.
+class ZonaQueRequiereArmas inherits Zona {
+  var property vidaPerdidaPorArma
+
+  override method cumpleRequisitoBase(entidad) {
+    return gruposHelper.integrantesDe(entidad).all({ g => g.estaArmado() })
+  }
+
+  override method aplicarConsecuencia(entidad) {
+    gruposHelper.integrantesDe(entidad).forEach({ g => g.sacarVida(vidaPerdidaPorArma * g.tamanioArsenal()) })
+  }
+}
+
+// Lossarnach: sin requisitos, se gana vida por cada arma.
+class ZonaLibre inherits Zona {
+  override method cumpleRequisitoBase(entidad) = true
+
+  override method aplicarConsecuencia(entidad) {
+    gruposHelper.integrantesDe(entidad).forEach({ g => g.aumentarVida(2 * g.tamanioArsenal()) })
+  }
+}
+
+// Un camino atraviesa una secuencia de zonas.
+class Camino {
+  var property lugares = []
+
+  method puedeRecorrerCamino(entidad) {
+    return lugares.all({ lugar => lugar.puedePasar(entidad) })
+  }
+
+  method realizarCamino(entidad) {
+    lugares.forEach({ lugar => lugar.pasarPorAca(entidad) })
+  }
+}
+
+// La Tierra Media está compuesta de regiones, cada una con su propio camino.
+class Region {
+  var property nombre
+  var property camino
+}
+
+// Camino Gondor, con Lossarnach,Lebennin y Minas Tirith.
+object gondor inherits Region (
+  nombre = "Gondor",
+  camino = new Camino(lugares = [
+    new ZonaLibre(),
+    new ZonaDeLebennin(),
+    new ZonaQueRequiereArmas(vidaPerdidaPorArma = 10)
+  ])
+) {
+}
+
+class RequerimientoDeElemento {
+  var property nombre
+  var property cantidad
+
+  method seCumple(entidad) {
+    return gruposHelper.integrantesDe(entidad).sum({ g => g.objetos().count({ o => o == nombre }) }) >= cantidad
+  }
+}
+
+class RequerimientoDeGuerrero {
+  var property condicion
+
+  method seCumple(entidad) {
+    return gruposHelper.integrantesDe(entidad).any(condicion)
+  }
+}

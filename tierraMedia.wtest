@@ -3,12 +3,12 @@ import tierraMedia.*
 /* -------------------- Objetos de Prueba ---------------------- */
 object personaPrueba
 {
-    var property vidaGuerrero = 200
+    var property vida = 200
 }
 
 object personaPrueba2
 {
-    var property vidaGuerrero = 5
+    var property vida = 5
 }
 
 object espadaPrueba
@@ -28,7 +28,7 @@ object baculoPrueba {
     var poderBase  = 100 
 
     method tienePocaVida(guerrero) {
-        return guerrero.vidaGuerrero() < 10
+        return guerrero.vida() < 10
     }
 
     method poderPotenciado(unGuerrero) {
@@ -161,7 +161,7 @@ describe "Flecha de bronce" {
 
 describe "Gandalf" {
     test "El poder de Gandalf, con vida 100 y armas de poder 100 y 150, debe ser 2000" {
-        gandalf.vidaGuerrero(100)
+        gandalf.vida(100)
         gandalf.armasGuerrero().clear()
         gandalf.armasGuerrero().add(armaDePoderCien)
         gandalf.armasGuerrero().add(armaDePoderCientoCincuenta)
@@ -169,7 +169,7 @@ describe "Gandalf" {
     }
 
     test "El poder de Gandalf, con poca vida y armas de poder 100 y 150, debe ser 1500" {
-        gandalf.vidaGuerrero(5)
+        gandalf.vida(5)
         gandalf.armasGuerrero().clear()
         gandalf.armasGuerrero().add(armaDePoderCien)
         gandalf.armasGuerrero().add(armaDePoderCientoCincuenta)
@@ -212,9 +212,9 @@ describe "Lebennin" {
     }
 
     test "Gandalf pasa por Lebennin" {
-        gandalf.vidaGuerrero(100)
+        gandalf.vida(100)
         lebennin.pasarPorAca(gandalf)
-        assert.equals(100, gandalf.vidaGuerrero())
+        assert.equals(100, gandalf.vida())
     } 
     
 }
@@ -229,12 +229,12 @@ describe "Minas Tirith" {
     }
 
     test "Gandalf pasa pero queda con 80 de vida por las 2 armas" {
-        gandalf.vidaGuerrero(100)
+        gandalf.vida(100)
         gandalf.armasGuerrero().clear()
         gandalf.armasGuerrero().add(baculo)
         gandalf.armasGuerrero().add(espada)
         minasTirith.pasarPorAca(gandalf)
-        assert.equals(80, gandalf.vidaGuerrero())
+        assert.equals(80, gandalf.vida())
     }
 }
 
@@ -244,18 +244,18 @@ describe "Lossarnach" {
     } 
 
     test "Gandalf con 100 de vida con armas queda en 104 de vida" {
-        gandalf.vidaGuerrero(100)
+        gandalf.vida(100)
         gandalf.armasGuerrero().clear()
         gandalf.armasGuerrero().add(baculo)
         gandalf.armasGuerrero().add(espada)
         lossarnach.pasarPorAca(gandalf)
-        assert.equals(104, gandalf.vidaGuerrero())
+        assert.equals(104, gandalf.vida())
     }
 }  
 
 describe "Camino de Gondor" {
     test "Gandalf puede atravesar el camino de Gondor" {
-        gandalf.vidaGuerrero(100)
+        gandalf.vida(100)
         gandalf.armasGuerrero().clear()
         gandalf.armasGuerrero().add(baculo)
         gandalf.armasGuerrero().add(espada)
@@ -263,22 +263,22 @@ describe "Camino de Gondor" {
     }
 
     test "Gandalf hace el camino y sufre efectos quedando con 80 de vida" {
-        gandalf.vidaGuerrero(100)
+        gandalf.vida(100)
         gandalf.armasGuerrero().clear()
         gandalf.armasGuerrero().add(baculo)
         gandalf.armasGuerrero().add(espada)
         gandalf.recorrerCamino(caminoDeGondor)
-        assert.equals(80, gandalf.vidaGuerrero())
+        assert.equals(80, gandalf.vida())
     }
 
     test "Gandalf hace el camino lebenin->lossarnach y sufre efectos quedando con 104 de vida" {
         caminoDeGondor.lugares([lebennin, lossarnach])
-        gandalf.vidaGuerrero(100)
+        gandalf.vida(100)
         gandalf.armasGuerrero().clear()
         gandalf.armasGuerrero().add(baculo)
         gandalf.armasGuerrero().add(espada)
         gandalf.recorrerCamino(caminoDeGondor)
-        assert.equals(104, gandalf.vidaGuerrero())
+        assert.equals(104, gandalf.vida())
     }
 }
 
@@ -289,6 +289,241 @@ describe "Tom Bombadil" {
 
     test "Tom Bombadil pasa camino de Gondor " {
         caminoDeGondor.realizarCamino(tomBombadil)
-        assert.equals(2000, tomBombadil.vidaGuerrero())
+        assert.equals(2000, tomBombadil.vida())
     }
 }
+
+
+// ------ Entrega 2 ------
+
+
+describe "Arsenal - Espada" {
+    test "Enano con Espada con multiplicador de 15 - da 300" {
+        const unEnano = new Enano(vida = 10, factorPoder = 3, arsenal = [])
+        const unaEspada = new Espada(multiplicador = 15)
+        assert.equals(300, unaEspada.poder(unEnano))
+    }
+
+    test "Elfo con Espada con multiplicador de 10 - da 250" {
+        const unElfo = new Elfo(vida = 10, destrezaPropia = 0, arsenal = [])
+        const unaEspada = new Espada(multiplicador = 10)
+        assert.equals(250, unaEspada.poder(unElfo))
+    }
+
+    test "Humano con Espada con multiplicador de 10 - da 150" {
+        const unHumano = new Humano(vida = 10, limitadorPoder = 2, arsenal = [])
+        const unaEspada = new Espada(multiplicador = 10)
+        assert.equals(150, unaEspada.poder(unHumano))
+    }
+
+    test "Guerrero de otra naturaleza con Espada con multiplicador de 10 con 2 armas - da 200" {
+        const espada15 = new Espada(multiplicador = 15)
+        const guerreroConDosArmas = new Hobbit(vida = 10, arsenal = [espada15, espada15], objetos = [])
+        const unaEspada = new Espada(multiplicador = 10)
+        assert.equals(200, unaEspada.poder(guerreroConDosArmas))
+    }
+}
+
+describe "Arsenal - Daga" {
+    test "Una daga da la mitad del poder que una espada " {
+        const unEnano = new Enano(vida = 10, factorPoder = 3, arsenal = [])
+        const unaEspada = new Espada(multiplicador = 15)
+        const unaDaga = new Daga(multiplicador = 15)
+        assert.equals(unaEspada.poder(unEnano) / 2, unaDaga.poder(unEnano))
+    }
+}
+
+describe "Arsenal - Baculo" {
+    test "El báculo otorga siempre su poder base, sin importar al guerrero" {
+        const unHobbit = new Hobbit(vida = 50, arsenal = [], objetos = [])
+        const unBaculo = new Baculo(poderBase = 400)
+        assert.equals(400, unBaculo.poder(unHobbit))
+    }
+}
+
+describe "Arsenal - Hacha" {
+    test "Hacha con mango de 50 cm y hoja de 5kg - da 250" {
+        const unHobbit = new Hobbit(vida = 50, arsenal = [], objetos = [])
+        const unHacha = new Hacha(mango = 50, hoja = 5)
+        assert.equals(250, unHacha.poder(unHobbit))
+    }
+}
+
+describe "Guerreros - Hobbit" {
+    test "Poder de un Hobbit con vida 50, sin armas ni objetos - es 50" {
+        const unHobbit = new Hobbit(vida = 50, arsenal = [], objetos = [])
+        assert.equals(50, unHobbit.poder())
+    }
+
+    test "Poder de un Hobbit con vida 50, un objeto y arsenal de poder 100 - es 150" {
+        const unHobbit = new Hobbit(vida = 50, arsenal = [new Baculo(poderBase = 100)], objetos = ["lembas"])
+        assert.equals(150, unHobbit.poder())
+    }
+
+    test "Poder de Frodo (vida 50, daga de multiplicador 8, sin items) - es 50" {
+        const frodo = new Hobbit(vida = 50, arsenal = [new Daga(multiplicador = 8)], objetos = [])
+        assert.equals(50, frodo.poder())
+    }
+}
+
+describe "Guerreros - Gollum" {
+    test "Poder de Gollum es la mitad que el de un Hobbit " {
+        const unHobbit = new Hobbit(vida = 50, arsenal = [], objetos = [])
+        assert.equals(unHobbit.poder() / 2, golumn.poder())
+    }
+}
+
+describe "Guerreros - Enano" {
+    test "Poder de un Enano con vida 10, factor 3 y sin armas - es 10" {
+        const unEnano = new Enano(vida = 10, factorPoder = 3, arsenal = [])
+        assert.equals(10, unEnano.poder())
+    }
+
+    test "Poder de Gimli (vida 75, factor 3, dos hachas de 70x5) - es 2175" {
+        const gimli = new Enano(vida = 75, factorPoder = 3, arsenal = [new Hacha(mango = 70, hoja = 5), new Hacha(mango = 70, hoja = 5)])
+        assert.equals(2175, gimli.poder())
+    }
+}
+
+describe "Guerreros - Elfo" {
+    test "Poder de Légolas (vida 80, destreza propia 1, espada multiplicador 12) - es 980" {
+        const legolas = new Elfo(vida = 80, destrezaPropia = 1, arsenal = [new Espada(multiplicador = 12)])
+        assert.equals(980, legolas.poder())
+    }
+}
+
+describe "Guerreros - Humano" {
+    test "Poder de un Humano con vida 10, limitador 2 y sin armas - es 10" {
+        const unHumano = new Humano(vida = 10, limitadorPoder = 2, arsenal = [])
+        assert.equals(10, unHumano.poder())
+    }
+}
+
+describe "Guerreros - Maiar" {
+    test "Poder de Gandalf como Maiar (vida 100, factor básico, espada mult. 10, báculo 400) es 2700" {
+        // vida * poderBasico + 2 * poderArsenal = 100*15 + 2*600 = 2700
+        const gandalfMaiar = new Maiar(vida = 100, arsenal = [new Espada(multiplicador = 10), new Baculo(poderBase = 400)])
+        assert.equals(2700, gandalfMaiar.poder())
+    }
+
+    test "Poder de Gandalf como Maiar bajo amenaza (mismos datos, factor 300) es 31200" {
+        // vida * poderBajoAmenaza + 2 * poderArsenal = 100*300 + 2*600 = 31200
+        const gandalfMaiar = new Maiar(vida = 100, bajoAmenaza = true, arsenal = [new Espada(multiplicador = 10), new Baculo(poderBase = 400)])
+        assert.equals(31200, gandalfMaiar.poder())
+    }
+}
+
+describe "Tom Bombadil - Entrega 2 - Poder en 10000000" {
+    test "El poder de Tom Bombadil es diez millones" {
+        assert.equals(10000000, tomBombadil.poder())
+    }
+}
+
+describe "Caminos - ZonaDeLebennin" {
+    test "no pasa por debajo del umbral" {
+        const zona = new ZonaDeLebennin()
+        const debil = new Humano(vida = 10, limitadorPoder = 1, arsenal = [])
+        assert.notThat(zona.puedePasar(debil))
+    }
+
+    test "sube el umbral a 1500 con mas de 3 guardias" {
+        const zonaConMuchosGuardias = new ZonaDeLebennin(guardias = 4)
+        const guerrero = new Humano(vida = 1200, limitadorPoder = 1, arsenal = [])
+        assert.notThat(zonaConMuchosGuardias.puedePasar(guerrero))
+    }
+}
+
+describe "Caminos - ZonaQueRequiereArmas" {
+    test "desarmado no pasa" {
+        const zona = new ZonaQueRequiereArmas(vidaPerdidaPorArma = 10)
+        const desarmado = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        assert.notThat(zona.puedePasar(desarmado))
+    }
+
+    test "la consecuencia resta vida segun la cantidad de armas" {
+        const zona = new ZonaQueRequiereArmas(vidaPerdidaPorArma = 10)
+        const armado = new Humano(vida = 100, limitadorPoder = 1, arsenal = [new Baculo(poderBase = 1), new Baculo(poderBase = 1)])
+        zona.pasarPorAca(armado)
+        assert.equals(80, armado.vida())
+    }
+}
+
+describe "Caminos - ZonaLibre" {
+    test "la consecuencia suma vida segun la cantidad de armas" {
+        const zona = new ZonaLibre()
+        const guerrero = new Humano(vida = 100, limitadorPoder = 1, arsenal = [new Baculo(poderBase = 1), new Baculo(poderBase = 1), new Baculo(poderBase = 1)])
+        zona.pasarPorAca(guerrero)
+        assert.equals(106, guerrero.vida())
+    }
+}
+
+describe "Caminos - Grupo" {
+    test "uno que no cumple el requisito frena a todo el grupo" {
+        const zona = new ZonaQueRequiereArmas(vidaPerdidaPorArma = 10)
+        const armado = new Humano(vida = 100, limitadorPoder = 1, arsenal = [new Baculo(poderBase = 1)])
+        const desarmado = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        const grupo = new Grupo(guerreros = [armado, desarmado])
+        assert.notThat(zona.puedePasar(grupo))
+    }
+
+    test "la consecuencia afecta a todos los integrantes" {
+        const zona = new ZonaLibre()
+        const g1 = new Humano(vida = 100, limitadorPoder = 1, arsenal = [new Baculo(poderBase = 1)])
+        const g2 = new Humano(vida = 100, limitadorPoder = 1, arsenal = [new Baculo(poderBase = 1)])
+        const grupo = new Grupo(guerreros = [g1, g2])
+        zona.pasarPorAca(grupo)
+        assert.equals(102, g1.vida())
+        assert.equals(102, g2.vida())
+    }
+}
+
+describe "Caminos - Requerimientos extra" {
+    test "requerimiento de elemento cumple o no segun la suma del grupo" {
+        const g1 = new Humano(vida = 10, limitadorPoder = 1, arsenal = [], objetos = ["Lembas", "Lembas"])
+        const g2 = new Humano(vida = 10, limitadorPoder = 1, arsenal = [], objetos = ["Lembas"])
+        const grupo = new Grupo(guerreros = [g1, g2])
+        assert.that(new RequerimientoDeElemento(nombre = "Lembas", cantidad = 3).seCumple(grupo))
+        assert.notThat(new RequerimientoDeElemento(nombre = "Lembas", cantidad = 4).seCumple(grupo))
+    }
+
+    test "requerimiento de guerrero alcanza con que uno solo cumpla" {
+        const unArmado = new Humano(vida = 10, limitadorPoder = 1, arsenal = [new Baculo(poderBase = 1), new Baculo(poderBase = 1)])
+        const otro = new Humano(vida = 10, limitadorPoder = 1, arsenal = [])
+        const grupo = new Grupo(guerreros = [unArmado, otro])
+        const req = new RequerimientoDeGuerrero(condicion = { g => g.tamanioArsenal() > 1 })
+        assert.that(req.seCumple(grupo))
+    }
+
+    test "una zona puede cumplir la base pero no el requerimiento extra" {
+        const zona = new ZonaLibre(requerimientosExtra = [new RequerimientoDeElemento(nombre = "Lembas", cantidad = 5)])
+        const sinLembas = new Humano(vida = 10, limitadorPoder = 1, arsenal = [], objetos = [])
+        assert.notThat(zona.puedePasar(sinLembas))
+    }
+}
+
+describe "Caminos - Camino" {
+    test "una sola zona que falla frena todo el camino" {
+        const camino = new Camino(lugares = [new ZonaLibre(), new ZonaQueRequiereArmas(vidaPerdidaPorArma = 10)])
+        const desarmado = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        assert.notThat(camino.puedeRecorrerCamino(desarmado))
+    }
+}
+
+describe "Caminos - Region de Gondor" {
+    test "un guerrero fuerte y armado puede recorrerlo entero" {
+        const guerrero = new Humano(vida = 2000, limitadorPoder = 1, arsenal = [new Baculo(poderBase = 50)])
+        assert.that(gondor.camino().puedeRecorrerCamino(guerrero))
+    }
+
+    test "un desarmado no puede, lo frena Minas Tirith" {
+        const guerrero = new Humano(vida = 2000, limitadorPoder = 1, arsenal = [])
+        assert.notThat(gondor.camino().puedeRecorrerCamino(guerrero))
+    }
+
+    test "recorrerlo aplica las 3 consecuencias en orden" {
+        const guerrero = new Humano(vida = 2000, limitadorPoder = 1, arsenal = [new Baculo(poderBase = 50)])
+        guerrero.recorrerCamino(gondor.camino())
+        assert.equals(1992, guerrero.vida())
+    }
+}
+

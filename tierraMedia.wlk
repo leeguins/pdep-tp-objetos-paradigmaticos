@@ -438,6 +438,7 @@ class Guerrero {
   var property arsenal = []
   var property objetos = []
   var property naturaleza
+  var property tactica = tacticaDefault
 
 
   method tamanioArsenal() {
@@ -469,6 +470,20 @@ class Guerrero {
   }
 
   method poder()
+
+  method atacar(oponente) {
+    if (self.vida() > 0) {
+      oponente.recibirAtaque(self.poder() * 0.10)
+    }
+  }
+
+  method recibirAtaque(danio) {
+    self.sacarVida(danio)
+  }
+
+  method enfrentar(oponente){
+    tactica.pelear(self,oponente)
+  }
 }
 
 // Defino la clase para los Hobbits
@@ -698,5 +713,60 @@ class RequerimientoDeGuerrero {
 
   method seCumple(entidad) {
     return gruposHelper.integrantesDe(entidad).any(condicion)
+  }
+}
+
+
+// ------- ENTREGA 3 -------
+
+// Tacticas 
+object tacticaDefault {
+  method pelear(atacante, oponente) {
+    atacante.atacar(oponente)
+    oponente.atacar(atacante)
+  }
+}
+
+object tacticaAgil {
+  method pelear(atacante, oponente) {
+    if(atacante.vida() > 0) { 
+      oponente.recibirAtaque((atacante.poder() + 100) * 0.10)
+    }
+    oponente.atacar(atacante)
+  }
+}
+
+object tacticaResistencia {
+  method pelear(atacante, oponente) {
+    if(oponente.vida() > 0) { 
+      atacante.recibirAtaque(oponente.poder() * 0.10 / 2)
+    }
+    atacante.atacar(oponente)
+  }
+}
+
+object tacticaLaCuatroTresTres {
+  method pelear(atacante, oponente) {
+    atacante.atacar(oponente)
+    atacante.atacar(oponente)
+    if (atacante.vida() <= 60) {
+      oponente.atacar(atacante)
+    }
+  }
+}
+
+// Caruso no es objeto, va con clase porque el umbral puede variar por guerrero que quiera usar esta tactica.
+// Un grande caruso, no me midaaa
+
+class TacticaCaruso {
+  var property umbral
+
+  method pelear(atacante, oponente) {
+    if (oponente.poder() > umbral) {
+      atacante.atacar(oponente)
+      oponente.atacar(atacante)
+    } else {
+      atacante.sacarVida(10)
+    }
   }
 }

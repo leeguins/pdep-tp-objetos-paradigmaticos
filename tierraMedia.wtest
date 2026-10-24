@@ -527,3 +527,24 @@ describe "Caminos - Region de Gondor" {
     }
 }
 
+
+// ------ Entrega 3 ------
+
+describe "Ataque general" {
+    test "un guerrero sin vida no puede producir danio" {
+        const atacanteMuerto = new Humano(vida = 0, limitadorPoder = 1, arsenal = [new Hacha(mango = 2, hoja = 5)])
+        const victima = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        atacanteMuerto.atacar(victima)
+        assert.equals(100, victima.vida())
+    }
+}
+
+describe "Tactica Default" {
+    test "ambos se atacan por el 10% de su poder y reciben la vuelta" {
+        const atacante = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        const oponente = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        atacante.enfrentar(oponente)
+        assert.equals(90, oponente.vida())
+        assert.equals(91, atacante.vida())
+    }
+}

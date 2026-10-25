@@ -411,6 +411,12 @@ describe "Guerreros - Maiar" {
         const gandalfMaiar = new Maiar(vida = 100, bajoAmenaza = true, arsenal = [new Espada(multiplicador = 10), new Baculo(poderBase = 400)])
         assert.equals(31200, gandalfMaiar.poder())
     }
+
+    test "Poder de Gandalf como Maiar con 9 de vida (poca vida, usa factor bajo amenaza) es 3900" {
+        // vida * poderBajoAmenaza + 2 * poderArsenal = 9*300 + 2*600 = 3900
+        const gandalfMaiar = new Maiar(vida = 9, arsenal = [new Espada(multiplicador = 10), new Baculo(poderBase = 400)])
+        assert.equals(3900, gandalfMaiar.poder())
+    }
 }
 
 describe "Tom Bombadil - Entrega 2 - Poder en 10000000" {

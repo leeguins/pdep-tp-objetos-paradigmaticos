@@ -659,3 +659,31 @@ describe "Tactica Caruso" {
         assert.equals(100, oponente.vida())
     }
 }
+describe "Tactica LaCuatroTresTres" {
+    test "con mas de 60 de vida hace doble ataque y no recibe respuesta" {
+        // doble ataque: 10 + 10 -> oponente 80 | vida 100 > 60 -> no recibe
+        const tactico = new Humano(vida = 100, limitadorPoder = 1, arsenal = [], tactica = tacticaLaCuatroTresTres)
+        const oponente = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        tactico.enfrentar(oponente)
+        assert.equals(80, oponente.vida())
+        assert.equals(100, tactico.vida())
+    }
+
+    test "con menos de 60 de vida hace doble ataque y recibe respuesta" {
+        // doble ataque: 5 + 5 -> oponente 90 | respuesta: 90 * 0.10 = 9 -> tactico 41
+        const tactico = new Humano(vida = 50, limitadorPoder = 1, arsenal = [], tactica = tacticaLaCuatroTresTres)
+        const oponente = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        tactico.enfrentar(oponente)
+        assert.equals(90, oponente.vida())
+        assert.equals(41, tactico.vida())
+    }
+
+    test "borde: con exactamente 60 de vida recibe respuesta" {
+        // doble ataque: 6 + 6 -> oponente 88 | respuesta: 88 * 0.10 = 8.8 -> tactico 51.2
+        const tactico = new Humano(vida = 60, limitadorPoder = 1, arsenal = [], tactica = tacticaLaCuatroTresTres)
+        const oponente = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        tactico.enfrentar(oponente)
+        assert.equals(88, oponente.vida())
+        assert.equals(51.2, tactico.vida())
+    }
+}

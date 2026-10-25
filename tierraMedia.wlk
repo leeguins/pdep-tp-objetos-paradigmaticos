@@ -470,6 +470,8 @@ class Guerrero {
   method recorrerCamino(camino) {
     if (camino.puedeRecorrerCamino(self)) {
       camino.realizarCamino(self)
+    } else {
+      self.error("No se puede recorrer el camino")
     }
   }
 
@@ -601,7 +603,9 @@ class Grupo {
   method recorrerCamino(camino) {
     if (camino.puedeRecorrerCamino(self)) {
       camino.realizarCamino(self)
-    }
+    } else {
+        self.error("No se puede recorrer el camino")
+    } 
   }
 }
 

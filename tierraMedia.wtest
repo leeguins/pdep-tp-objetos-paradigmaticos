@@ -727,3 +727,22 @@ describe "Perder arma mas poderosa" {
         assert.that(tomBombadil.estaArmado())
     }
 }
+
+describe "Recorrer camino intransitable" {
+    test "un guerrero que no puede recorrer el camino recibe un error" {
+        const desarmado = new Humano(vida = 2000, limitadorPoder = 1, arsenal = [])
+        assert.throwsExceptionWithMessage("No se puede recorrer el camino", { desarmado.recorrerCamino(gondor.camino()) })
+    }
+
+    test "un grupo que no puede recorrer el camino recibe un error" {
+        const armado = new Humano(vida = 2000, limitadorPoder = 1, arsenal = [new Baculo(poderBase = 50)])
+        const desarmado = new Humano(vida = 2000, limitadorPoder = 1, arsenal = [])
+        const grupo = new Grupo(guerreros = [armado, desarmado])
+        assert.throwsExceptionWithMessage("No se puede recorrer el camino", { grupo.recorrerCamino(gondor.camino()) })
+    }
+    test "si no puede recorrerlo no sufre los efectos de las zonas" {
+        const desarmado = new Humano(vida = 2000, limitadorPoder = 1, arsenal = [])
+        assert.throwsException({ desarmado.recorrerCamino(gondor.camino()) })
+        assert.equals(2000, desarmado.vida())
+    }
+}

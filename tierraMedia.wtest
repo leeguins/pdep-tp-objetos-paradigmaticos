@@ -750,3 +750,25 @@ describe "Recorrer camino intransitable" {
         assert.equals(sinPenalidad, camino.penalidad())
     }
 }
+
+describe "Penalidad perder toda la vida" {
+    test "si no puede recorrer el camino queda sin vida y recibe el error" {
+        const camino = new Camino(lugares = [new ZonaQueRequiereArmas(vidaPerdidaPorArma = 10)], penalidad = penalidadPerderTodaLaVida)
+        const desarmado = new Humano(vida = 2000, limitadorPoder = 1, arsenal = [])
+        assert.throwsException({ desarmado.recorrerCamino(camino) })
+        assert.equals(0, desarmado.vida())
+    }
+
+    test "si puede recorrer el camino no se aplica la penalidad" {
+        // 1 arma * 10 de vida por arma = pierde 10 -> 1990
+        const camino = new Camino(lugares = [new ZonaQueRequiereArmas(vidaPerdidaPorArma = 10)], penalidad = penalidadPerderTodaLaVida)
+        const armado = new Humano(vida = 2000, limitadorPoder = 1, arsenal = [new Baculo(poderBase = 50)])
+        armado.recorrerCamino(camino)
+        assert.equals(1990, armado.vida())
+    }
+
+    test "Tom Bombadil no pierde vida con esta penalidad" {
+        penalidadPerderTodaLaVida.aplicarA(tomBombadil)
+        assert.equals(2000, tomBombadil.vida())
+    }
+}

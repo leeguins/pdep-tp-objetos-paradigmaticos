@@ -689,6 +689,12 @@ object sinPenalidad {
   }
 }
 
+object penalidadPerderTodaLaVida {
+  method aplicarA(guerrero) {
+    guerrero.sacarVida(guerrero.vida())
+  }
+}
+
 // Un camino atraviesa una secuencia de zonas.
 class Camino {
   var property lugares = []

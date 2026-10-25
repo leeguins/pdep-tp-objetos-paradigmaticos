@@ -687,3 +687,17 @@ describe "Tactica LaCuatroTresTres" {
         assert.equals(51.2, tactico.vida())
     }
 }
+describe "Cambio de tactica" {
+    test "el mismo guerrero pelea distinto al cambiar de tactica" {
+        // pelea 1 (agil): oponente1 80, guerrero 92
+        // pelea 2 (LaCuatroTresTres con 92 de vida): 9.2 + 9.2 -> oponente2 81.6 | 92 > 60 -> no recibe
+        const guerrero = new Humano(vida = 100, limitadorPoder = 1, arsenal = [], tactica = tacticaAgil)
+        const oponente1 = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        const oponente2 = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        guerrero.enfrentar(oponente1)
+        guerrero.tactica(tacticaLaCuatroTresTres)
+        guerrero.enfrentar(oponente2)
+        assert.equals(81.6, oponente2.vida())
+        assert.equals(92, guerrero.vida())
+    }
+}

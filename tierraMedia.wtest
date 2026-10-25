@@ -436,6 +436,9 @@ describe "Tom Bombadil - Entrega 2 - Poder en 10000000" {
     test "El poder de Tom Bombadil es diez millones" {
         assert.equals(10000000, tomBombadil.poder())
     }
+    test "Tom Bombadil puede atravesar una ZonaDeLebennin" {
+        assert.that(new ZonaDeLebennin().puedePasar(tomBombadil))
+    }
 }
 
 describe "Caminos - ZonaDeLebennin" {

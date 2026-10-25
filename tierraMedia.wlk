@@ -321,16 +321,12 @@ object caminoDeGondor {
 }
 
 /* ----- Tom Bombadil ----- */
-object tomBombadil {
-  const property vida = 2000
-  const arsenal = []
-  const objetos = []
-  const property naturaleza = otraNaturaleza
+object tomBombadil inherits Guerrero (vida = 2000, naturaleza = otraNaturaleza) {
 
-  method tamanioArsenal () {
+  override method tamanioArsenal () {
     return 1000
   }
-  method estaArmado () {
+  override method estaArmado () {
     return true
   }
   method tamanioBolsa () {
@@ -340,14 +336,14 @@ object tomBombadil {
     return true
   }
 
-  method poder() {
+  override method poder() {
     return 10000000
   }
 
-  method sacarVida(unValor) {
+  override method sacarVida(unValor) {
   } // No pierde vida, es inmortal.
 
-  method aumentarVida(unValor) {
+  override method aumentarVida(unValor) { 
   } // no hace nada
 }
 

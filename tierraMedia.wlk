@@ -471,6 +471,7 @@ class Guerrero {
     if (camino.puedeRecorrerCamino(self)) {
       camino.realizarCamino(self)
     } else {
+      camino.penalizar(self)
       self.error("No se puede recorrer el camino")
     }
   }
@@ -604,6 +605,7 @@ class Grupo {
     if (camino.puedeRecorrerCamino(self)) {
       camino.realizarCamino(self)
     } else {
+        camino.penalizar(self)
         self.error("No se puede recorrer el camino")
     } 
   }
@@ -681,9 +683,16 @@ class ZonaLibre inherits Zona {
   }
 }
 
+// Penalidad por defecto: no hace nada
+object sinPenalidad {
+  method aplicarA(guerrero) {
+  }
+}
+
 // Un camino atraviesa una secuencia de zonas.
 class Camino {
   var property lugares = []
+  var property penalidad = sinPenalidad
 
   method puedeRecorrerCamino(entidad) {
     return lugares.all({ lugar => lugar.puedePasar(entidad) })
@@ -691,6 +700,10 @@ class Camino {
 
   method realizarCamino(entidad) {
     lugares.forEach({ lugar => lugar.pasarPorAca(entidad) })
+  }
+
+  method penalizar(entidad) {
+    gruposHelper.integrantesDe(entidad).forEach({ guerrero => penalidad.aplicarA(guerrero) })
   }
 }
 

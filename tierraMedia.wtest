@@ -745,4 +745,8 @@ describe "Recorrer camino intransitable" {
         assert.throwsException({ desarmado.recorrerCamino(gondor.camino()) })
         assert.equals(2000, desarmado.vida())
     }
+    test "un camino nuevo no tiene penalidad por defecto" {
+        const camino = new Camino(lugares = [new ZonaLibre()])
+        assert.equals(sinPenalidad, camino.penalidad())
+    }
 }

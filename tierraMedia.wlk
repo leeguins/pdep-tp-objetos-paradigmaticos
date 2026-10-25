@@ -695,6 +695,29 @@ object penalidadPerderTodaLaVida {
   }
 }
 
+class PenalidadFraccionDeVida {
+  var property fraccion
+
+  method aplicarA(guerrero) {
+    guerrero.sacarVida(guerrero.vida() * fraccion)
+  }
+}
+
+object penalidadPerderArmaMasPoderosa {
+  method aplicarA(guerrero) {
+    guerrero.perderArmaMasPoderosa()
+  }
+}
+
+// aplica todas las penalidades en orden
+class PenalidadCompuesta {
+  var property penalidades = []
+
+  method aplicarA(guerrero) {
+    penalidades.forEach({ penalidad => penalidad.aplicarA(guerrero) })
+  }
+}
+
 // Un camino atraviesa una secuencia de zonas.
 class Camino {
   var property lugares = []

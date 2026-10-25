@@ -772,3 +772,47 @@ describe "Penalidad perder toda la vida" {
         assert.equals(2000, tomBombadil.vida())
     }
 }
+
+describe "Penalidad fraccion de vida" {
+    test "pierde la fraccion configurada de su vida actual" {
+        const guerrero = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        new PenalidadFraccionDeVida(fraccion = 0.5).aplicarA(guerrero)
+        assert.equals(50, guerrero.vida())
+    }
+
+    test "Tom Bombadil no pierde vida con esta penalidad" {
+        new PenalidadFraccionDeVida(fraccion = 0.5).aplicarA(tomBombadil)
+        assert.equals(2000, tomBombadil.vida())
+    }
+}
+
+describe "Penalidad perder arma mas poderosa" {
+    test "si no puede recorrer el camino pierde su arma mas poderosa y recibe el error" {
+        // poder: 100 + (100 + 300) / 1 = 500 < 1500 -> Lebennin no lo deja pasar
+        const baculoDebil = new Baculo(poderBase = 100)
+        const baculoFuerte = new Baculo(poderBase = 300)
+        const guerrero = new Humano(vida = 100, limitadorPoder = 1, arsenal = [baculoDebil, baculoFuerte])
+        const camino = new Camino(lugares = [new ZonaDeLebennin()], penalidad = penalidadPerderArmaMasPoderosa)
+        assert.throwsException({ guerrero.recorrerCamino(camino) })
+        assert.equals([baculoDebil], guerrero.arsenal())
+    }
+}
+
+describe "Penalidad compuesta" {
+    test "aplica todas sus penalidades" {
+        const baculoDebil = new Baculo(poderBase = 100)
+        const baculoFuerte = new Baculo(poderBase = 300)
+        const guerrero = new Humano(vida = 100, limitadorPoder = 1, arsenal = [baculoDebil, baculoFuerte])
+        const compuesta = new PenalidadCompuesta(penalidades = [new PenalidadFraccionDeVida(fraccion = 0.5), penalidadPerderArmaMasPoderosa])
+        compuesta.aplicarA(guerrero)
+        assert.equals(50, guerrero.vida())
+        assert.equals([baculoDebil], guerrero.arsenal())
+    }
+
+    test "sin penalidades no le hace nada" {
+        const guerrero = new Humano(vida = 100, limitadorPoder = 1, arsenal = [new Baculo(poderBase = 100)])
+        new PenalidadCompuesta().aplicarA(guerrero)
+        assert.equals(100, guerrero.vida())
+        assert.equals(1, guerrero.arsenal().size())
+    }
+}

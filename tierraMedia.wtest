@@ -631,3 +631,31 @@ describe "Tactica Resistencia" {
         assert.equals(100, resistente.vida())
     }
 }
+
+//Caruso ataca si el poder del oponente SUPERA su umbral, si no, huye
+describe "Tactica Caruso" {
+    test "si el poder del oponente supera el umbral, ataca primero y recibe la respuesta" {
+        // 100 > 50 -> ataca: 100 * 0.10 = 10 -> oponente 90 | respuesta: 90 * 0.10 = 9 -> caruso 91
+        const caruso = new Humano(vida = 100, limitadorPoder = 1, arsenal = [], tactica = new TacticaCaruso(umbral = 50))
+        const oponente = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        caruso.enfrentar(oponente)
+        assert.equals(90, oponente.vida())
+        assert.equals(91, caruso.vida())
+    }
+
+    test "si el poder del oponente no supera el umbral, huye y pierde 10 de vida" {
+        const caruso = new Humano(vida = 100, limitadorPoder = 1, arsenal = [], tactica = new TacticaCaruso(umbral = 500))
+        const oponente = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        caruso.enfrentar(oponente)
+        assert.equals(90, caruso.vida())
+        assert.equals(100, oponente.vida())
+    }
+
+    test "borde: si el poder del oponente es igual al umbral, huye" {
+        const caruso = new Humano(vida = 100, limitadorPoder = 1, arsenal = [], tactica = new TacticaCaruso(umbral = 100))
+        const oponente = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        caruso.enfrentar(oponente)
+        assert.equals(90, caruso.vida())
+        assert.equals(100, oponente.vida())
+    }
+}

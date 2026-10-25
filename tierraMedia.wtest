@@ -390,6 +390,12 @@ describe "Guerreros - Elfo" {
         const legolas = new Elfo(vida = 80, destrezaPropia = 1, arsenal = [new Espada(multiplicador = 12)])
         assert.equals(980, legolas.poder())
     }
+    test "Poder de Légolas que obtiene medio punto de destreza propia es 1130" {
+        // vida + (destrezaBase + destrezaPropia) * poderArsenal = 80 + (2 + 1.5) * 300 = 1130
+        const legolas = new Elfo(vida = 80, destrezaPropia = 1, arsenal = [new Espada(multiplicador = 12)])
+        legolas.destrezaPropia(legolas.destrezaPropia() + 0.5)
+        assert.equals(1130, legolas.poder())
+    }
 }
 
 describe "Guerreros - Humano" {

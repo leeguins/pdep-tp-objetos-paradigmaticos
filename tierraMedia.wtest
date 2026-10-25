@@ -397,6 +397,11 @@ describe "Guerreros - Humano" {
         const unHumano = new Humano(vida = 10, limitadorPoder = 2, arsenal = [])
         assert.equals(10, unHumano.poder())
     }
+    test "Poder de Aragorn (vida 85, Anduril mult. 18, daga mult. 10, limitador 20) es 102.25" {
+        // vida + poderArsenal / limitador = 85 + (18*15 + 10*15/2) / 20 = 85 + 345/20 = 102.25
+        const aragorn = new Humano(vida = 85, limitadorPoder = 20, arsenal = [new Espada(multiplicador = 18), new Daga(multiplicador = 10)])
+        assert.equals(102.25, aragorn.poder())
+    }
 }
 
 describe "Guerreros - Maiar" {

@@ -406,12 +406,6 @@ describe "Guerreros - Maiar" {
         assert.equals(2700, gandalfMaiar.poder())
     }
 
-    test "Poder de Gandalf como Maiar bajo amenaza (mismos datos, factor 300) es 31200" {
-        // vida * poderBajoAmenaza + 2 * poderArsenal = 100*300 + 2*600 = 31200
-        const gandalfMaiar = new Maiar(vida = 100, bajoAmenaza = true, arsenal = [new Espada(multiplicador = 10), new Baculo(poderBase = 400)])
-        assert.equals(31200, gandalfMaiar.poder())
-    }
-
     test "Poder de Gandalf como Maiar con 9 de vida (poca vida, usa factor bajo amenaza) es 3900" {
         // vida * poderBajoAmenaza + 2 * poderArsenal = 9*300 + 2*600 = 3900
         const gandalfMaiar = new Maiar(vida = 9, arsenal = [new Espada(multiplicador = 10), new Baculo(poderBase = 400)])

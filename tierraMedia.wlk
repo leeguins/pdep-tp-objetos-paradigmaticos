@@ -560,10 +560,10 @@ class Humano inherits Guerrero (naturaleza = humano) {
 class Maiar inherits Guerrero (naturaleza = otraNaturaleza) {
   var property poderBasico = 15
   var property poderBajoAmenaza = 300
-  var property bajoAmenaza = false
+  method estaBajoAmenaza() = self.vida() < 10
 
   override method poder() {
-    if (bajoAmenaza) {
+    if (self.estaBajoAmenaza()) {
       return vida * poderBajoAmenaza + 2 * self.poderArsenal()
     } else {
       return vida * poderBasico + 2 * self.poderArsenal()

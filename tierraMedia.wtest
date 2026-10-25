@@ -396,6 +396,14 @@ describe "Guerreros - Elfo" {
         legolas.destrezaPropia(legolas.destrezaPropia() + 0.5)
         assert.equals(1130, legolas.poder())
     }
+    test "Cambiar la destreza base afecta a todos los elfos" {
+        // Légolas: 80 + (3 + 1) * 300 = 1280 | Arwen: 50 + (3 + 0) * 250 = 800
+        const legolas = new Elfo(vida = 80, destrezaPropia = 1, arsenal = [new Espada(multiplicador = 12)])
+        const arwen = new Elfo(vida = 50, destrezaPropia = 0, arsenal = [new Espada(multiplicador = 10)])
+        elfos.destrezaBase(3)
+        assert.equals(1280, legolas.poder())
+        assert.equals(800, arwen.poder())
+    }
 }
 
 describe "Guerreros - Humano" {

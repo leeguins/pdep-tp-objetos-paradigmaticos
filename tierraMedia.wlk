@@ -529,13 +529,17 @@ class Enano inherits Guerrero (naturaleza = enano) {
   }
 }
 
+// Configuración compartida por todos los elfos
+object elfos {
+  var property destrezaBase = 2
+} 
+
 // Defino la clase para los Elfos
 class Elfo inherits Guerrero (naturaleza = elfico) {
   var property destrezaPropia
-  var property destrezaBase = 2
 
   method poderElfico() {
-    return vida + ((destrezaPropia + destrezaBase) * self.poderArsenal())
+    return vida + ((destrezaPropia + elfos.destrezaBase()) * self.poderArsenal())
   }
 
   override method poder() {

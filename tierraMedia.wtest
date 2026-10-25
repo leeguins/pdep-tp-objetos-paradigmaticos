@@ -816,3 +816,98 @@ describe "Penalidad compuesta" {
         assert.equals(1, guerrero.arsenal().size())
     }
 }
+
+// ------ Anillos ------
+
+describe "Duplicar vida con tope" {
+    test "con poca vida la duplica" {
+        const guerrero = new Humano(vida = 30, limitadorPoder = 1, arsenal = [])
+        guerrero.duplicarVidaConTope()
+        assert.equals(60, guerrero.vida())
+    }
+
+    test "si al duplicar supera 100, queda en 100" {
+        const guerrero = new Humano(vida = 70, limitadorPoder = 1, arsenal = [])
+        guerrero.duplicarVidaConTope()
+        assert.equals(100, guerrero.vida())
+    }
+
+    test "si ya tenia mas de 100, no se reduce" {
+        const guerrero = new Humano(vida = 150, limitadorPoder = 1, arsenal = [])
+        guerrero.duplicarVidaConTope()
+        assert.equals(150, guerrero.vida())
+    }
+}
+
+describe "Anillo de fuego" {
+    test "duplica la vida del duenio y su archienemigo pierde 20" {
+        const enemigo = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        const duenio = new Humano(vida = 40, limitadorPoder = 1, arsenal = [], archienemigo = enemigo)
+        new AnilloDeFuego(dueno = duenio).invocar()
+        assert.equals(80, duenio.vida())
+        assert.equals(80, enemigo.vida())
+    }
+
+    test "sin archienemigo no falla" {
+        const duenio = new Humano(vida = 40, limitadorPoder = 1, arsenal = [])
+        new AnilloDeFuego(dueno = duenio).invocar()
+        assert.equals(80, duenio.vida())
+    }
+}
+
+describe "Anillo de aire" {
+    test "duplica la vida del duenio y su mejor amigo gana 30" {
+        const amigo = new Humano(vida = 50, limitadorPoder = 1, arsenal = [])
+        const duenio = new Humano(vida = 40, limitadorPoder = 1, arsenal = [], mejorAmigo = amigo)
+        new AnilloDeAire(dueno = duenio).invocar()
+        assert.equals(80, duenio.vida())
+        assert.equals(80, amigo.vida())
+    }
+}
+
+describe "Anillo maldito" {
+    test "duplica la vida del duenio y le hace perder su arma mas poderosa" {
+        const baculoDebil = new Baculo(poderBase = 100)
+        const baculoFuerte = new Baculo(poderBase = 300)
+        const duenio = new Humano(vida = 40, limitadorPoder = 1, arsenal = [baculoDebil, baculoFuerte])
+        new AnilloMaldito(dueno = duenio).invocar()
+        assert.equals(80, duenio.vida())
+        assert.equals([baculoDebil], duenio.arsenal())
+    }
+}
+
+describe "Anillo unico" {
+    test "su duenio inicial es Gollum" {
+        assert.equals(golumn, anilloUnico.dueno())
+    }
+
+    test "invocado por Gollum: duplica su vida y descuenta 30 por tener 3 armas o menos" {
+        // 50 -> 100 -> sin armas: -30 -> 70
+        anilloUnico.invocar()
+        assert.equals(70, golumn.vida())
+    }
+
+    test "con mas de 3 armas descuenta 20" {
+        // 40 -> 80 -> 4 armas: -20 -> 60
+        const guerrero = new Humano(vida = 40, limitadorPoder = 1, arsenal = [new Baculo(poderBase = 1), new Baculo(poderBase = 2), new Baculo(poderBase = 3), new Baculo(poderBase = 4)])
+        anilloUnico.dueno(guerrero)
+        anilloUnico.invocar()
+        assert.equals(60, guerrero.vida())
+    }
+
+    test "borde: con exactamente 3 armas descuenta 30" {
+        // 40 -> 80 -> 3 armas: -30 -> 50
+        const guerrero = new Humano(vida = 40, limitadorPoder = 1, arsenal = [new Baculo(poderBase = 1), new Baculo(poderBase = 2), new Baculo(poderBase = 3)])
+        anilloUnico.dueno(guerrero)
+        anilloUnico.invocar()
+        assert.equals(50, guerrero.vida())
+    }
+
+    test "al cambiar de duenio, el efecto lo sufre el nuevo y Gollum queda intacto" {
+        const guerrero = new Humano(vida = 40, limitadorPoder = 1, arsenal = [])
+        anilloUnico.dueno(guerrero)
+        anilloUnico.invocar()
+        assert.equals(50, guerrero.vida())
+        assert.equals(50, golumn.vida())
+    }
+}

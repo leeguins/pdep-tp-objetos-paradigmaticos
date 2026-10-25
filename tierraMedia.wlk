@@ -435,6 +435,8 @@ class Guerrero {
   var property objetos = []
   var property naturaleza
   var property tactica = tacticaDefault
+  var property archienemigo = nadie
+  var property mejorAmigo = nadie
 
 
   method tamanioArsenal() {
@@ -465,6 +467,11 @@ class Guerrero {
 
   method aumentarVida(unValor) {
     vida = vida + unValor
+  }
+
+  // Duplica con tope 100, si ya tenia mas de 100, no se reduce
+  method duplicarVidaConTope() {
+    self.aumentarVida((100.min(self.vida() * 2) - self.vida()).max(0))
   }
 
   method recorrerCamino(camino) {
@@ -821,6 +828,58 @@ class TacticaCaruso {
       oponente.atacar(atacante)
     } else {
       atacante.sacarVida(10)
+    }
+  }
+}
+
+// ------- Anillos -------
+
+// archienemigo / mejor amigo de quien no tiene ninguno
+object nadie {
+  method sacarVida(unValor) {
+  }
+
+  method aumentarVida(unValor) {
+  }
+}
+
+// todos duplican la vida del duenio y luego aplican su efecto particular
+class Anillo {
+  var property dueno
+
+  method invocar() {
+    dueno.duplicarVidaConTope()
+    self.efecto()
+  }
+
+  method efecto()
+}
+
+class AnilloDeFuego inherits Anillo {
+  override method efecto() {
+    dueno.archienemigo().sacarVida(20)
+  }
+}
+
+class AnilloDeAire inherits Anillo {
+  override method efecto() {
+    dueno.mejorAmigo().aumentarVida(30)
+  }
+}
+
+class AnilloMaldito inherits Anillo {
+  override method efecto() {
+    dueno.perderArmaMasPoderosa()
+  }
+}
+
+// Hay un solo Anillo Unico......su duenio inicial es Gollum.
+object anilloUnico inherits Anillo (dueno = golumn) {
+  override method efecto() {
+    if (dueno.tamanioArsenal() > 3) {
+      dueno.sacarVida(20)
+    } else {
+      dueno.sacarVida(30)
     }
   }
 }

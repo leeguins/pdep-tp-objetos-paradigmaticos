@@ -449,6 +449,14 @@ class Guerrero {
     return arsenal.sum({arma => arma.poder(self)})
   }
 
+  method armaMasPoderosa() = arsenal.max({arma => arma.poder(self)})
+  
+  method perderArmaMasPoderosa() {
+    if (!arsenal.isEmpty()) {
+      arsenal.remove(self.armaMasPoderosa())
+    }
+  }
+
   method esGrupo() = false
 
   method sacarVida(unValor) {

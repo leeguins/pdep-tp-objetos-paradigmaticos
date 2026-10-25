@@ -701,3 +701,29 @@ describe "Cambio de tactica" {
         assert.equals(92, guerrero.vida())
     }
 }
+
+// ------ Penalidades ------
+
+describe "Perder arma mas poderosa" {
+    test "con varias armas pierde solo la de mayor poder" {
+        // poderes: 100, 300, 50 (hacha 10 * 5) -> se va la de 300, quedan 150
+        const baculoDebil = new Baculo(poderBase = 100)
+        const baculoFuerte = new Baculo(poderBase = 300)
+        const hacha = new Hacha(mango = 10, hoja = 5)
+        const guerrero = new Humano(vida = 100, limitadorPoder = 1, arsenal = [baculoDebil, baculoFuerte, hacha])
+        guerrero.perderArmaMasPoderosa()
+        assert.notThat(guerrero.arsenal().contains(baculoFuerte))
+        assert.equals(150, guerrero.poderArsenal())
+    }
+
+    test "sin armas no falla y el arsenal sigue vacio" {
+        const guerrero = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        guerrero.perderArmaMasPoderosa()
+        assert.that(guerrero.arsenal().isEmpty())
+    }
+
+    test "Tom Bombadil no falla aunque dice estar armado" {
+        tomBombadil.perderArmaMasPoderosa()
+        assert.that(tomBombadil.estaArmado())
+    }
+}

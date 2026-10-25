@@ -604,3 +604,30 @@ describe "Tactica Agil" {
         assert.equals(100, oponente.vida())
     }
 }
+
+describe "Tactica Resistencia" {
+    test "recibe la mitad del danio y luego ataca" {
+        // oponente: 100 * 0.10 / 2 = 5 -> resistente 95 | respuesta: 95 * 0.10 = 9.5 -> oponente 90.5
+        const resistente = new Humano(vida = 100, limitadorPoder = 1, arsenal = [], tactica = tacticaResistencia)
+        const oponente = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        resistente.enfrentar(oponente)
+        assert.equals(95, resistente.vida())
+        assert.equals(90.5, oponente.vida())
+    }
+
+    test "si muere con el primer golpe no contraataca" {
+        // oponente: 1000 * 0.10 / 2 = 50 -> resistente 0 | sin vida no responde
+        const resistente = new Humano(vida = 10, limitadorPoder = 1, arsenal = [], tactica = tacticaResistencia)
+        const oponente = new Humano(vida = 1000, limitadorPoder = 1, arsenal = [])
+        resistente.enfrentar(oponente)
+        assert.equals(0, resistente.vida())
+        assert.equals(1000, oponente.vida())
+    }
+
+    test "un oponente sin vida no le produce danio" {
+        const resistente = new Humano(vida = 100, limitadorPoder = 1, arsenal = [], tactica = tacticaResistencia)
+        const oponente = new Humano(vida = 0, limitadorPoder = 1, arsenal = [])
+        resistente.enfrentar(oponente)
+        assert.equals(100, resistente.vida())
+    }
+}

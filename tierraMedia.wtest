@@ -578,3 +578,29 @@ describe "Tom Bombadil - Combate" {
         assert.equals(0, atacante.vida())
     }
 }
+describe "Tactica Agil" {
+    test "ataca primero con +100 de poder y luego recibe la respuesta" {
+        // agil: (100 + 100) * 0.10 = 20 -> oponente 80 | respuesta: 80 * 0.10 = 8 -> agil 92
+        const agil = new Humano(vida = 100, limitadorPoder = 1, arsenal = [], tactica = tacticaAgil)
+        const oponente = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        agil.enfrentar(oponente)
+        assert.equals(80, oponente.vida())
+        assert.equals(92, agil.vida())
+    }
+
+    test "si mata al oponente en el primer golpe no recibe respuesta" {
+        // agil: (1000 + 100) * 0.10 = 110 -> oponente 0 | oponente sin vida no responde
+        const agil = new Humano(vida = 1000, limitadorPoder = 1, arsenal = [], tactica = tacticaAgil)
+        const oponente = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        agil.enfrentar(oponente)
+        assert.equals(0, oponente.vida())
+        assert.equals(1000, agil.vida())
+    }
+
+    test "sin vida no produce danio aunque tenga el bonus" {
+        const agil = new Humano(vida = 0, limitadorPoder = 1, arsenal = [], tactica = tacticaAgil)
+        const oponente = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        agil.enfrentar(oponente)
+        assert.equals(100, oponente.vida())
+    }
+}

@@ -570,3 +570,11 @@ describe "Tactica Default" {
         assert.equals(91, atacante.vida())
     }
 }
+describe "Tom Bombadil - Combate" {
+    test "Tom Bombadil no pierde vida en combate y su respuesta deja al atacante sin vida" {
+        const atacante = new Humano(vida = 100, limitadorPoder = 1, arsenal = [])
+        atacante.enfrentar(tomBombadil)
+        assert.equals(2000, tomBombadil.vida())
+        assert.equals(0, atacante.vida())
+    }
+}
